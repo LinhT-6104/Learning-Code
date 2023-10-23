@@ -1,0 +1,1 @@
+print("Hold me up Holp me tight \n\tLift me up o touch the sky \n\tTeching me to love with heart \nHelp me open my mind")
