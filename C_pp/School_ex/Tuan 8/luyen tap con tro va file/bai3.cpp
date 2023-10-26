@@ -17,31 +17,28 @@ int main(){
     inpf >> n;
     thongtin sv[n];
 
+    // Nhap thong tin cac sinh vien
     int count = 0;
     for (int i = 0; i < n; i++) {
-        cin.ignore();
+        inpf.ignore();
         getline(inpf, sv[i].tensv);
         getline(inpf, sv[i].quequan);
         inpf >> sv[i].toan;
         inpf >> sv[i].van;
         inpf >> sv[i].anh;
-        sv[i].dtb = (sv[i].toan + sv[i].van + sv[i].anh) / 3;
 
-        if (sv[i].dtb >= 8.5)   count++;
+        sv[i].dtb = (sv[i].toan + sv[i].van + sv[i].anh) / 3;   // Tinh diem trung binh
+
+        if (sv[i].dtb >= 8.5)   count++;    // Dem so luong sinh vien co diem trung binh >= 8.5
     }
 
     outf << count << endl;
+
     for (int i = 0; i < n; i++) {
-        if (sv[i].dtb >= 8.5) {
-            outf << sv[i].tensv << " ";
-            outf << sv[i].quequan << " ";
-            outf << sv[i].dtb << endl;
-        }
+        if (sv[i].dtb >= 8.5)   outf << sv[i].tensv << " " << sv[i].quequan << " " << sv[i].dtb << endl;
     }
 
-    
-
-
-
+    inpf.close();
+    outf.close();
     return 0;
 }

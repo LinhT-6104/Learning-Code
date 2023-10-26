@@ -11,7 +11,7 @@ int main() {
   int pos = s1.find(s2);
 
   // Nếu pos != string::npos thì chuỗi cần tìm nằm trong chuỗi ban đầu
-  if (pos != npos) {
+  if (pos != string::npos) {
     cout << "co" << endl;
     return 0;
   }
