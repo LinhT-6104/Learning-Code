@@ -1,0 +1,9 @@
+4
+Vang bong mot thoi
+1960 15 25
+Tieng chim hot trong bui man gai
+1982 30 125
+Chi pheo
+1995 5 75
+Song dong em dem
+1970 25 150
