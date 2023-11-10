@@ -11,7 +11,8 @@ int main() {
 	// Dem so luong tu trong chuoi
 	int count = 0;
 	for (int i = 0; i < s.size(); i++) {
-		if (s[i-1] == ' ' or i == 0) count++;
+		if (isalpha(s[i]) and (i == 0 or s[i-1] = ' '))
+		count++;
 	}
 	cout << "So luong tu trong chuoi: " << count << endl;
 	

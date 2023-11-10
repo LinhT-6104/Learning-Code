@@ -12,6 +12,7 @@ struct high_tree {
 bool sapxep(const high_tree &tree1, const high_tree &tree2) {
     return tree1.high <= tree2.high;
 }
+
 int main(){
     ifstream inpf("tree.inp");
     ofstream outf("tree.out");
@@ -19,7 +20,8 @@ int main(){
     int n;
     inpf >> n;
 
-    high_tree tree[n];
+    high_tree tree[n];  // Khai bao mang tree kieu du lieu high_tree
+
     for (int i = 0; i < n; i++) {
         inpf >> tree[i].high;
         tree[i].index = i+1;
