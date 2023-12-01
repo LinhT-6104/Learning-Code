@@ -1,47 +1,27 @@
-#include <iostream>
-#include <conio.h>
+#include<iostream>
 
 using namespace std;
 
-class MangToaDo
-{
+class Person {
+private:
+	string name;
 public:
-	int n;
-
-	MangToaDo() 
-	{
-		n = 0;
+	Person(string name) {
+		this->name = name;
 	}
-
-	class ToaDo
-	{
-	public:
-		int x, y;
-
-		ToaDo() {}
-		ToaDo(int a, int b)
-		{
-			x = a;
-			y = b;
-		}
-	};
-
-	ToaDo mToaDo[10];
-
-	void ThemToaDo(ToaDo td)
-	{
-		mToaDo[n] = td;
-		n++;
+	string getName() {
+		return name;
+	}
+	void setName(string name) {
+		this->name = name;
 	}
 };
 
-int main()
-{
-	MangToaDo mToaDo;
-	ToaDo td(3, 2); //không truy cập được
+class Student : Person {
 
-	mToaDo.ThemToaDo(td);
+};
 
-	getch();
+int main() {
+	Student s;
 	return 0;
 }
