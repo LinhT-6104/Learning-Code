@@ -5,6 +5,14 @@
         "ostream": "cpp",
         "iosfwd": "cpp",
         "*.tcc": "cpp",
-        "iomanip": "cpp"
+        "iomanip": "cpp",
+        "array": "cpp",
+        "deque": "cpp",
+        "string": "cpp",
+        "unordered_map": "cpp",
+        "vector": "cpp",
+        "initializer_list": "cpp",
+        "cmath": "cpp",
+        "random": "cpp"
     }
 }
