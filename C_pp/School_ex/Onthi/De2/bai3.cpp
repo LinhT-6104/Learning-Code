@@ -19,7 +19,7 @@ public:
         cin >> age;
         cin.ignore();
         cout << "Nhap dia chi: ";
-        getline(cin, address);
+        getline(cin, address); 
     }
     // Ham xuat
     void output() {

@@ -1,0 +1,12 @@
+* Character: import java.lang.Character;
+	- Character.isDigit(s.charAt(i)): Kiểm tra xem ký tự s[i] có phải là chữ số hay không.
+	- Character.isLetter(s.charAt(i)): Kiểm tra xem ký tự s[i] có phải là chữ cái hay không.
+	- Character.isWhitespace(char ch): Kiểm tra xem ký tự ch có phải là ký tự khoảng trắng hay không.
+
+	- Character.isUpperCase(char ch): Kiểm tra xem ký tự ch có phải là chữ hoa hay không. 
+	- Character.isLowerCase(char ch): Kiểm tra xem ký tự ch có phải là chữ thường hay không. 
+	- Character.toUpperCase(char ch): Chuyển đổi ký tự ch thành chữ hoa.
+	- Character.toLowerCase(char ch): Chuyển đổi ký tự ch thành chữ thường. 
+	
+	- Character.toDigit(char ch): Trả về giá trị số của ký tự ch nếu ký tự ch là chữ số.
+		

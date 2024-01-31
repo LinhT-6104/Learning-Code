@@ -1,4 +1,4 @@
-#include <iostream>
+#include<iostream>
 
 using namespace std;
 
@@ -6,23 +6,14 @@ class Color {
 private:
     string TenMau;
     string MaMau;
-
 public:
-    // Ham tao khong tham so
     Color() {
-        TenMau = "";
-        MaMau = "";
+        TenMau = MaMau = "";
     }
-    // Ham tao co tham so
     Color(string TenMau, string MaMau) {
         this->TenMau = TenMau;
         this->MaMau = MaMau;
     }
-    // Ham tra ve TenMau
-    string getTenMau() {
-        return TenMau;
-    }
-    // Toan tu nhap
     friend istream &operator>>(istream &inp, Color &x) {
         cout << "Nhap ten mau: ";
         getline(inp, x.TenMau);
@@ -30,11 +21,13 @@ public:
         getline(inp, x.MaMau);
         return inp;
     }
-    // Toan tu xuat
-    friend ostream &operator<<(ostream &outp, Color &x) {
-        outp << "- Ten mau: " << x.TenMau << endl;
-        outp << "- Ma mau: " << x.MaMau << endl;
-        return outp;
+    friend ostream &operator<<(ostream &out, Color &x) {
+        out << "- Ten mau: " << x.TenMau << endl;
+        out << "- Ma mau: " << x.MaMau << endl;
+        return out;
+    }
+    string getTenMau() {
+        return TenMau;
     }
 };
 
@@ -42,75 +35,70 @@ class Point {
 private:
     int x;
     int y;
-
 public:
-    // Ham tao khong tham so
     Point() {
         x = y = 0;
     }
-    // Ham tao co tham so
     Point(int x, int y) {
         this->x = x;
         this->y = y;
     }
-    // Ham CheoChinh
-    virtual bool CheoChinh() {
-        return x == y;
-    }
-    // Toan tu nhap
-    friend istream &operator>>(istream &inp, Point &diem) {
-        cout << "Nhap x: "; inp >> diem.x;
-        cout << "Nhap y: "; inp >> diem.y;
+    friend istream &operator>>(istream &inp, Point &a) {
+        cout << "Nhap toa do x: ";
+        inp >> a.x;
+        cout << "Nhap toa do y: ";
+        inp >> a.y;
         return inp;
     }
-    // Toan tu xuat
-    friend ostream &operator<<(ostream &outp, Point &diem) {
-        outp << "- x = " << diem.x << endl;
-        outp << "- y = " << diem.y << endl;
-        return outp;
+    friend ostream &operator<<(ostream &out, Point &a) {
+        out << "- x: " << a.x << endl;
+        out << "- y: " << a.y << endl;
+    }
+    bool CheoChinh() {
+        return x == y;
     }
 };
 
 class Pixel: public Color, public Point {
 public:
-    // Ham tao khong tham so
-    Pixel(): Color(), Point(){}
-
-    // ham tao co tham so
+    Pixel() : Color(), Point() {}
     Pixel(string TenMau, string MaMau, int x, int y) : Color(TenMau, MaMau), Point(x, y) {}
-
-    // Toan tu nhap
-    friend istream& operator>>(istream& inp, Pixel& pixel) {
-        inp >> static_cast<Color&>(pixel);
-        inp >> static_cast<Point&>(pixel);
+    friend istream &operator>>(istream &inp, Pixel &a) {
+        inp >> static_cast<Color&>(a);
+        inp >> static_cast<Point&>(a);
         return inp;
     }
-    // Toan tu xuat
-    friend ostream& operator<<(ostream& outp, Pixel& pixel) {
-        outp << static_cast<Color&>(pixel);
-        outp << static_cast<Point&>(pixel);
-        return outp;
+    friend ostream &operator<<(ostream &out, Pixel &a) {
+        out << static_cast<Color&>(a);
+        out << static_cast<Point&>(a);
+        return out;
     }
-    
-    // Ham KiemTra
     bool KiemTra() {
-        if (CheoChinh() && getTenMau() == "Xanh") return true;
-        return false;
+        return CheoChinh() && getTenMau() == "Xanh";
     }
 };
 
-int main() {
-    Pixel pixel[100];   
-    int n;
-    cout << "Nhap so Pixel: ";  cin >> n;
+void nhapDL(int n, Pixel pixel[]) {
+    cout << "Nhap n: "; cin >> n;
     cin.ignore();
     for (int i = 0; i < n; i++) {
+        cout << "--- pixel " << i+1 << " ---\n";
         cin >> pixel[i];
         cin.ignore();
     }
-    cout << "\nPixel thoa man la:\n";
+}
+
+void show(int n, Pixel pixel[]) {
+    cout << "\nCac pixel thoa man\n";
     for (int i = 0; i < n; i++) {
         if (pixel[i].KiemTra()) cout << pixel[i] << endl;
     }
+}
+
+int main() {
+    int n;
+    Pixel pixel[100];
+    nhapDL(n, pixel);
+    show(n, pixel);
     return 0;
 }

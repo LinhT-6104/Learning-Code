@@ -68,7 +68,7 @@ public:
         return outp;
     }
 
-    ~NHANVIEN() {}
+    ~NHANVIEN() {}  
 };
 
 void nhapThongTin(NHANVIEN A[], int n) {

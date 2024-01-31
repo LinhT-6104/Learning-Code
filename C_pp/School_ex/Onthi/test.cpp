@@ -1,116 +1,53 @@
 #include <iostream>
+#include <cmath>
 
 using namespace std;
 
-class Color {
+class THIETBI {
 private:
-    string TenMau;
-    string MaMau;
+    string tenTB;
+    int namSX;
+    double GiaBan;
 
 public:
-    // Ham tao khong tham so
-    Color() {
-        TenMau = "";
-        MaMau = "";
+    THIETBI() {
+        tenTB = "";
+        namSX = 0;
+        GiaBan = 0;
     }
-    // Ham tao co tham so
-    Color(string TenMau, string MaMau) {
-        this->TenMau = TenMau;
-        this->MaMau = MaMau;
+    THIETBI(string tenTB, int namSX, double GiaBan) {
+        this->tenTB = tenTB;
+        this->namSX = namSX;
+        this->GiaBan = GiaBan;
     }
-    // Ham tra ve TenMau
-    string getTenMau() {
-        return TenMau;
+    virtual void nhapThongTin() {
+        cout << "Nhap ten thiet bi: ";  
+        cin.ignore();
+        getline(cin, tenTB);
+        cout << "Nhap nam san xuat: ";  cin >> namSX;
+        cout << "Nhap gia ban: "; cin >> GiaBan;
     }
-    // Toan tu nhap
-    friend istream &operator>>(istream &inp, Color &x) {
-        cout << "Nhap ten mau: ";
-        getline(inp, x.TenMau);
-        cout << "Nhap ma mau: ";
-        getline(inp, x.MaMau);
-        return inp;
+    virtual void hienThiThongTin() {
+        cout << "- Ten thiet bi: " << tenTB << endl;
+        cout << "- Nam san xuat: " << namSX << endl;
+        cout << "- Gia ban: " << GiaBan << endl;
     }
-    // Toan tu xuat
-    friend ostream &operator<<(ostream &outp, Color &x) {
-        outp << "- Ten mau: " << x.TenMau << endl;
-        outp << "- Ma mau: " << x.MaMau << endl;
-        return outp;
+    double getGiaBan(){
+        return GiaBan;
     }
+	friend bool soSanh (THIETBI A, THIETBI B);
 };
+bool soSanh(THIETBI A, THIETBI B) {
+	return A.GiaBan < B.GiaBan;
+}
 
-class Point {
-private:
-    int x;
-    int y;
 
-public:
-    // Ham tao khong tham so
-    Point() {
-        x = y = 0;
-    }
-    // Ham tao co tham so
-    Point(int x, int y) {
-        this->x = x;
-        this->y = y;
-    }
-    // Ham CheoChinh
-    virtual bool CheoChinh() {
-        return x == y;
-    }
-    // Toan tu nhap
-    friend istream &operator>>(istream &inp, Point &diem) {
-        cout << "Nhap x: "; inp >> diem.x;
-        cout << "Nhap y: "; inp >> diem.y;
-        return inp;
-    }
-    // Toan tu xuat
-    friend ostream &operator<<(ostream &outp, Point &diem) {
-        outp << "- x = " << diem.x << endl;
-        outp << "- y = " << diem.y << endl;
-        return outp;
-    }
-};
-
-class Pixel: public virtual Color, public virtual Point {
-public:
-    // Ham tao khong tham so
-    Pixel(): Color(), Point(){}
-
-    // ham tao co tham so
-    Pixel(string TenMau, string MaMau, int x, int y) : Color(TenMau, MaMau), Point(x, y) {}
-
-    // Toan tu nhap
-    friend istream& operator>>(istream& inp, Pixel& pixel) {
-        inp >> pixel;
-        inp >> pixel;
-        return inp;
-    }
-    // Toan tu xuat
-    friend ostream& operator<<(ostream& outp, Pixel& pixel) {
-        outp << pixel;
-        outp << pixel;
-        return outp;
-    }
-    
-    // Ham KiemTra
-    bool KiemTra() {
-        if (CheoChinh() && getTenMau() == "Xanh") return true;
-        return false;
-    }
-};
 
 int main() {
-    Pixel pixel[100];   
-    int n;
-    cout << "Nhap so Pixel: ";  cin >> n;
-    cin.ignore();
-    for (int i = 0; i < n; i++) {
-        cin >> pixel[i];
-        cin.ignore();
-    }
-    cout << "Pixel thoa man la: ";
-    for (int i = 0; i < n; i++) {
-        if (pixel[i].KiemTra()) cout << pixel[i];
-    }
+    THIETBI A, B;
+	A.nhapThongTin();
+	B.nhapThongTin();
+	cout << soSanh(A, B);
+    
     return 0;
 }
