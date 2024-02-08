@@ -1,0 +1,29 @@
+ Em hãy cài đặt kiểu dữ liệu trừu tượng danh sách tuyến tính bằng cấu trúc danh sách liên kết (hướng đối tượng) gồm các phép toán sau:
+
++ List(): Khởi tạo ds rỗng
+
++ Len(): Trả về số phần tử của danh sách
+
++ InsertFirst(value): Thêm giá trị value vào đầu danh sách
+
++ Insert(pos, value): chèn value vào vị trí thứ pos trong danh sách
+
++ Append(value): Thêm giá trị value vào cuối danh sách
+
++ Delete(value): xoá giá trị value khỏi danh sách
+
++ Traversal(): duyệt danh sách
+
+Sau khi cài đặt kiểu dữ liệu trừu tượng danh sách tuyến tính, em hãy thực hiện:
+
++ Nhập vào 3 giá trị và chèn vào đầu danh sách, 
+
++ Nhập vào 1 giá trị chèn vào cuối danh sách, 
+
++ Nhập vào 1 giá trị chèn vào vị trí 4 trong danh sách
+
++ Nhập vào 1 giá trị, tìm kiếm giá trị đó trong danh sách và xoá giá trị khỏi danh sách
+
++ In các phần tử của danh sách
+
+Sản phẩm: 1 file cài đặt .Py (nếu cài bằng Python) hoặc .CPP (nếu cài bằng C++) và 1 file ảnh chụp màn hình kết quả chạy
