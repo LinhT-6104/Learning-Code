@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html>
+
+<!--
+ Use OpenGL and GLUT to draw a simple cube
+  with each face being a different color.  Rotations
+  can be applied with the arrow keys, the page up
+  key, and the page down key.  The home key will set
+  all rotations to 0.  Initial rotations about the
+  x, y, and z axes are 15, -15, and 0.  
+
+  This program is meant as an example of using modeling
+  transforms, with glPushMatrix and glPopMatrix.
+ 
+  Note that this program does not use lighting.
+-->
+
+<head>
+<meta charset="UTF-8">
+<title>Unlit Cube Example</title>
+
+<script src="glsim.js"></script>  <!-- load the OpenGL 1.1 simulation code -->
+<!-- <script src="/js/model_edited.js"></script>
+<script src="/js/model-by-myself.js"></script> -->
+
+<script>
+
+    let rotateX = 30;   // rotations of cube about the axes
+    let rotateY = -15;
+    let rotateZ = 0;
+    let lastMouseX = -1;
+    let lastMouseY = -1;
+    var frameNumber = 0, loop = loop || 0, fps = 1;
+
+    function drawCircle(x, y, r, color = [255, 255, 0], style = GL_POLYGON){
+        glBegin( style );
+        glColor3ubv(color);
+        for (i = 0; i < 64; i++){
+            angle = 2 * Math.PI * i / 64;
+            x1 = x + r * Math.cos(angle);
+            y1 = y + r * Math.sin(angle);
+            glVertex2f(x1, y1);
+        }
+        glEnd();
+    }
+    
+    function uvSphere(radius, slices, stacks, color = [255, 255, 0]) {
+    var i,j;
+    glColor3ubv(color);
+    for (j = 0; j < stacks; j++) {
+        var latitude1 = (Math.PI/stacks) * j - Math.PI/2;
+        var latitude2 = (Math.PI/stacks) * (j+1) - Math.PI/2;
+        var sinLat1 = Math.sin(latitude1);
+        var cosLat1 = Math.cos(latitude1);
+        var sinLat2 = Math.sin(latitude2);
+        var cosLat2 = Math.cos(latitude2);
+        glBegin(GL_TRIANGLE_STRIP);
+        for (i = 0; i <= slices; i++) {
+            var longitude = (2*Math.PI/slices) * i;
+            var sinLong = Math.sin(longitude);
+            var cosLong = Math.cos(longitude);
+            var x1 = cosLong * cosLat1;
+            var y1 = sinLong * cosLat1;
+            var z1 = sinLat1;
+            var x2 = cosLong * cosLat2;
+            var y2 = sinLong * cosLat2;
+            var z2 = sinLat2;
+            glNormal3d(x2,y2,z2);
+	    glVertex3d(radius*x2,radius*y2,radius*z2);
+	    glNormal3d(x1,y1,z1);
+            glVertex3d(radius*x1,radius*y1,radius*z1);
+        }
+        glEnd();
+    }
+}
+
+    function transform(){
+        glClear(GL_COLOR_BUFFER_BIT); // Fills the scene with blue.
+        frameNumber += 3;
+        glPushMatrix();
+        glPushMatrix();
+        glRotatef(frameNumber, 0, 1,0);
+        uvSphere(40, 200, 200, [255, 255, 0]);
+        glPopMatrix();        
+        // Sao thủy
+        glPushMatrix();
+            glRotatef(frameNumber * 3, 0, 1,0);
+            glTranslatef(50, -10, 0);
+            uvSphere(4, 200, 200, [193, 193, 193]);
+        glPopMatrix();
+
+        // Sao Kim
+        glPushMatrix();
+            glRotatef(frameNumber * 1.5, 0, 1,0);
+            glTranslatef(70, -20, 0);
+            uvSphere(5, 200, 200, [255, 254, 179]);
+        glPopMatrix();
+        
+        // Trái Đất
+        glPushMatrix();
+            glRotatef(frameNumber, 0, 1,0);
+            glTranslatef(90, -5, 0);
+            uvSphere(5, 200, 200, [3, 110, 156]);
+        glPopMatrix();
+
+        // Sao Hỏa
+        glPushMatrix();
+            glRotatef(frameNumber/5, 0, 1,0);
+            glTranslatef(110, -20, 0);
+            uvSphere(3, 200, 200, [255, 102, 52]);
+        glPopMatrix();
+
+        // Sao Mộc
+        glPushMatrix();
+            glRotatef(frameNumber / 8, 0, 1,0);
+            glTranslatef(150, 10, 0);
+            uvSphere(14, 100, 100, [255, 205, 154]);
+        glPopMatrix();
+
+        // Sao Thổ
+        glPushMatrix();
+            glRotatef(frameNumber / 11, 0, 1,0);
+            glTranslatef(180, -30, 0);
+            glPushMatrix();
+                // glTranslatef(0, 0, -1);
+                glRotatef(90, 1, 0, 0);
+                drawCircle(0, 0, 22, [192, 155, 111], GL_POLYGON);
+            glPopMatrix();
+            glPushMatrix();
+                glTranslatef(0, 1, 0);
+                glRotatef(90, 1, 0, 0);
+                drawCircle(0, 0, 17, [0, 0, 0], GL_POLYGON);
+            glPopMatrix();
+            glPushMatrix();
+                glTranslatef(0, -1, 0);
+                glRotatef(90, 1, 0, 0);
+                drawCircle(0, 0, 17, [0, 0, 0], GL_POLYGON);
+            glPopMatrix();
+
+            uvSphere(12, 200, 200, [226, 185, 131]);
+        glPopMatrix();
+
+        // Sao Thiên Vương
+        glPushMatrix();
+            glRotatef(frameNumber / 18, 0, 1,0);
+            glTranslatef(210, 7, 0);
+            uvSphere(12, 100, 100, [148, 189, 193]);
+        glPopMatrix();
+
+        // Sao Hải Vương
+        glPushMatrix();
+            glRotatef(frameNumber / 24, 0, 1,0); 
+            glTranslatef(240, -35, 0);
+            uvSphere(12, 200, 200, [117, 158, 248]);
+        glPopMatrix();
+
+        glPopMatrix();
+    }
+    
+    
+    function draw() {  // Draws the image.
+
+        
+        glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glLoadIdentity();             // Set up modelview transform. 
+        glRotatef(rotateZ,0,0,1);
+        glRotatef(rotateY,0,1,0);
+        glRotatef(rotateX,1,0,0);
+        //gluLookAt(0,0,50,0,0,0,0,10,0);
+
+        loop && clearInterval(loop);
+        loop = setInterval(transform, 1000/50);
+        }
+        function handleMouseDown(event) {
+    lastMouseX = event.clientX;
+    lastMouseY = event.clientY;
+}
+
+    function handleMouseMove(event) {
+    if (lastMouseX != -1 && lastMouseY != -1) {
+        let newX = event.clientX;
+        let newY = event.clientY;
+        let deltaX = newX - lastMouseX;
+        let deltaY = newY - lastMouseY;
+
+        rotateX += deltaY * 0.5;
+        rotateY += deltaX * 0.5;
+
+        lastMouseX = newX;
+        lastMouseY = newY;
+
+        draw();
+    }
+}
+
+    function handleMouseUp(event) {
+    lastMouseX = -1;
+    lastMouseY = -1;
+}
+
+    function initGL() {
+        glMatrixMode(GL_PROJECTION);
+        glOrtho(-300, 300, -250, 250, -250, 250);
+        glMatrixMode(GL_MODELVIEW);
+        glEnable(GL_DEPTH_TEST);
+        glClearColor(0, 0, 0, 1);
+    }
+
+    function doKeyDown(evt) {
+         let key = evt.keyCode;
+         if ( key == 37 ) // left
+         rotateY -= 15;
+         else if ( key == 39 ) // right
+         rotateY += 15;
+         else if ( key == 40) // down
+         rotateX += 15;
+         else if ( key == 38 ) // up
+         rotateX -= 15;
+         else if ( key == 33 ) // page up
+         rotateZ += 15;
+         else if ( key == 34 ) // page down
+         rotateZ -= 15;
+         else if ( key == 36 )  // home
+         rotateX = rotateY = rotateZ = 0;
+         if (key >=34 && key <= 40) {
+             evt.preventDefault();
+         }
+         transform();
+         draw();
+     }
+
+    function init() {  // Called by <body onload="init()">, when the page has loaded.
+    try {
+        glsimUse("glcanvas"); // OpenGL will draw to the canvas with id="glcanvas".
+    }
+    catch (e) {
+        document.getElementById("canvas-holder").innerHTML =
+            "Sorry, an error occured:<br>" + e;
+        return;
+    }
+    document.onkeydown = doKeyDown;
+    initGL();
+    draw();
+    }
+    window.onload = init;
+
+</script>
+
+</head>
+
+<body onload="init()">
+
+<h3>ĐỒ HỌA MÁY TÍNH</h3>
+
+<noscript>
+<p><b>Sorry, this page requires JavaScript!</b></p>
+</noscript>
+
+<div id="canvas-holder">
+<canvas id="glcanvas" width="500" height="500"
+onmousedown="handleMouseDown(event)"
+onmousemove="handleMouseMove(event)"
+onmouseup="handleMouseUp(event)"
+</canvas>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>COMP 274 - Đồ họa máy tính</title>
+
+    <script src="glsim.js"></script> <!-- load the OpenGL 1.1 simulation code -->
+    <script>
+        var frameNumber = 0;
+        var loop = null; // Đã thay đổi từ loop = loop || 0 để tránh lỗi không mong muốn.
+        var fps = 60;
+
+        function transform() {
+            glClear(GL_COLOR_BUFFER_BIT); // Xóa màn hình và điền màu nền xanh.
+            
+            // Tính toán màu nền của bầu trời dựa trên vị trí của mặt trời.
+            var skyColor;
+            if (frameNumber < 300) {
+                // Gradient màu từ màu xanh nhạt đến màu đen khi mặt trời lặn
+                var gradient = frameNumber / 300;
+                var r = (1 - gradient) * 0.78; // Giảm giá trị của thành phần màu đỏ
+                var g = (1 - gradient) * 0.78; // Giảm giá trị của thành phần màu xanh lá
+                var b = 1 - gradient; // Tăng giá trị của thành phần màu xanh lam
+                skyColor = [r, g, b, 1]; // Gradient từ màu xanh nhạt đến màu đen
+            } else if (frameNumber < 600) {
+                // Gradient màu từ màu đen đến màu xanh nhạt khi mặt trời mọc lại
+                var gradient = (frameNumber - 300) / 300; // 600 - 300 = 300 là khoảng thời gian mặt trời lặn đến mặt trời mọc lại
+                var r = (1 + gradient) * 0.78; // Tăng giá trị của thành phần màu đỏ
+                var g = (1 + gradient) * 0.78; // Tăng giá trị của thành phần màu xanh lá
+                var b = 1 - gradient; // Giảm giá trị của thành phần màu xanh lam
+                skyColor = [r, g, b, 1]; // Gradient từ màu đen đến màu xanh nhạt
+            } else {
+                skyColor = [0.78, 0.78, 1, 1]; // Màu xanh nhạt khi mặt trời mọc lại hoàn toàn
+            }
+
+            // Đặt màu nền của bầu trời
+            glClearColor(skyColor[0], skyColor[1], skyColor[2], skyColor[3]);
+
+            // Tăng frameNumber và xử lý nếu nó vượt quá giá trị 900
+            frameNumber += 0.5;
+            if (frameNumber > 900) {
+                frameNumber = 0; // Reset frameNumber về 0 nếu vượt quá 900
+            }
+
+            // Vẽ các đối tượng khác
+            drawSun(260, -50);
+            drawMountain([0, 150, 30]);
+            drawRoad(0, -150, 600, 80);
+            drawWindmill(-236, 40, 7, 180);
+            drawWindmill(-112, 40, 7, 120);
+            drawWindmill(17, 35, 7, 210);
+            drawCar(-30, -120, 155, 45);
+        }
+        
+        // Ve hinh tron
+        function circle(x, y, r, color = [255, 0, 0]) {
+            glPushMatrix();
+                glBegin(GL_POLYGON);
+                    glColor3ubv(color);
+                    for (let i = 0; i < 128; i++) {
+                        let frameNumber = (2 * Math.PI * i) / 128;  // 6.2832 represents 2*PI
+                        let cx = x + r * Math.cos(frameNumber);
+                        let cy = y + r * Math.sin(frameNumber);
+                        glVertex2f(cx, cy);
+                    }
+                glEnd();
+            glPopMatrix();
+        }
+        
+        // Ve hinh chu nhat
+        function quad(x, y, w, h, color = [255, 255, 0]) {
+            glPushMatrix();
+                glTranslatef(x-w/2,y-h/2,0);
+                glBegin(GL_QUADS);
+                    glColor3ubv(color);
+                    glVertex2f(0,0);
+                    glVertex2f(0,h);
+                    glVertex2f(w,h);
+                    glVertex2f(w,0)
+                glEnd();
+            glPopMatrix();
+        }
+        
+        // Ve diem
+        function point(x, y, size, color = [0, 0, 0]) {
+            glPushMatrix();
+                glPointSize(size);
+                glBegin(GL_POINTS);
+                    glColor3ubv(color)
+                    glVertex2f(x,y);
+                glEnd();
+            glPopMatrix();
+        }
+        
+        // Ve nui
+        function drawMountain(color = [0, 150, 30]) {
+            glBegin(GL_POLYGON);
+                glColor3ubv(color);
+                glVertex2f(-300, -300);
+                glVertex2f(-300, -70);
+                glVertex2f(-170, 15);
+                glVertex2f(-145, -20);
+                glVertex2f(-42, 60);
+                glVertex2f(103, -80);
+                glVertex2f(222, -30);
+                glVertex2f(300, -70);
+                glVertex2f(300, -300);
+            glEnd();
+        }
+        
+        // Ve duong
+        function drawRoad(x, y, w, h) {
+            glPushMatrix();
+                glTranslatef(x, y, 0);
+                    quad(0, 0, w, h, [100, 100, 150]);   // Lan duong
+                    quad(0, 0, w, 6, [255, 255, 255]);  // Vach ke duong
+            glPopMatrix();
+        }
+        
+        // Ve nan hoa
+        function drawLinesAround(x, y, r, numSpokes, color = [167, 167, 167]) {
+            glPushMatrix();
+                for (let i = 0; i < numSpokes; i++) {
+                    let theta = i * ((2 * Math.PI) / numSpokes);
+                    let Lx = x + r * Math.sin(theta);
+                    let Ly = y - r * Math.cos(theta);
+                    glBegin(GL_LINES);
+                        glColor3ubv(color);
+                        glVertex2f(x,y);
+                        glVertex2f(Lx, Ly);
+                    glEnd();
+                }
+            glPopMatrix();
+        }
+        
+        // Ve mat troi
+        function drawSun(x, y) {
+            glPushMatrix();
+            glRotatef(frameNumber, 0, 0, 1)
+
+            glPushMatrix();
+            glTranslatef(x, y , 0);
+            glRotatef(frameNumber, 0, 0, 1);
+
+            // Thay đổi màu của mặt trời theo thời gian hoặc frameNumber
+            // Ví dụ: Sử dụng gradient màu từ vàng đến đỏ khi mặt trời lặn
+            var sunColor = [255, 215, 0]; // Mặt trời màu vàng
+            if (frameNumber > 360) {
+                // Điều chỉnh màu theo gradient khi mặt trời lặn
+                var gradient = (frameNumber - 360) / 420; // 420 frames để mặt trời hoàn toàn lặn
+                sunColor = [255, 215 - gradient * 100, 0]; // Màu từ vàng đến đỏ
+            }
+            drawLinesAround(0, 0, 70, 10, [217, 137, 130]);
+            circle(0, 0, 43, sunColor); // Màu của mặt trời
+            circle(0, 0, 41, [255, 255, 0]); // Ánh sáng màu vàng
+
+            glPopMatrix();
+
+            glPopMatrix();
+        }
+        
+        function drawWindmill(x, y, w, h) {
+            // Ve cot:
+            quad(x, y, w, h, [170, 153, 153]);
+            // Ve canh:
+            glPushMatrix();
+                glColor3ubv([200, 100, 100]);
+                glTranslatef(x, y + h/2, 0);
+                glRotatef(frameNumber, 0, 0, 1);
+                for (let i = 0; i < 3; i++) {
+                    glRotated(120, 0, 0, 1);
+                    glBegin(GL_QUADS);
+                        glVertex2f(0, 0);
+                        glVertex2f(-w/1.7, h/8);
+                        glVertex2f(0, h/2.4);
+                        glVertex2f(w/1.7, h/8);
+                    glEnd();   
+                }
+            glPopMatrix();
+        }
+        
+        function drawCar(x, y, w, h , color = [255, 0, 0]) {
+            glPushMatrix();
+                glTranslatef(frameNumber - 400, y, 0);
+                // Banh trai
+                glPushMatrix();
+                    glTranslatef(-w/2.4 * 2/3, -h/2 * 3/2, 0);
+                    glRotatef(frameNumber, 0, 0, -1);
+                    circle(0, 0, 21 , [0, 0, 0]);   // Vanh xe
+                    circle(0, 0, 17, [204, 204, 204]); // Ben trong vanh
+                    drawLinesAround(0, 0, 17, 12);  // Nan hoa
+                    circle(0, 0, 4.5, [0, 0, 0]);
+                glPopMatrix();
+                
+                // Banh phai
+                glPushMatrix();
+                    glTranslatef(w/2.4 * 2/3, -h/2 * 3/2, 0);
+                    glRotatef(frameNumber, 0, 0, -1);
+                    circle(0, 0, 21 , [0, 0, 0]);   // Vanh xe
+                    circle(0, 0, 17, [204, 204, 204]); // Ben trong vanh
+                    drawLinesAround(0, 0, 17, 12);  // Nan hoa
+                    circle(0, 0, 4.5, [0, 0, 0]);
+                glPopMatrix();
+            
+                // Than duoi
+                quad(0, 0, w, h, color);
+                
+                // Than tren
+                quad(-35, h * 2/3, w / 3, h / 3, color);
+            glPopMatrix();
+        }
+        
+        function draw() {
+            clearInterval(loop); // Sửa từ clearInterval(loop) để xóa bộ hẹn giờ cũ trước khi tạo một bộ hẹn giờ mới.
+            loop = setInterval(transform, 1000 / fps);
+        }
+
+        function initGL() {
+            glClearColor(0.78, 0.78, 1, 1);
+            // The next three lines set up the coordinates system.
+            glMatrixMode(GL_PROJECTION);
+            glLoadIdentity();
+            glOrtho(-300, 300, -250, 250, -1, 1);
+            glMatrixMode(GL_MODELVIEW);
+            glEnable(GL_POINT_SMOOTH);
+        }
+
+        function init() {  // Called by <body onload="init()">, when the page has loaded.
+            try {
+                glsimUse("glcanvas"); // OpenGL will draw to the canvas with id="glcanvas".
+            }
+            catch (e) {
+                document.getElementById("canvas-holder").innerHTML =
+                    "Sorry, an error occured:<br>" + e;
+                return;
+            }
+            initGL();
+            draw();
+        }
+
+        window.onload = init;
+
+    </script>
+
+</head>
+
+<body>
+
+    <h3>COMP 274 - Đồ họa máy tính</h3>
+
+    <noscript>
+        <p><b>Sorry, this page requires JavaScript!</b></p>
+    </noscript>
+
+    <div id="canvas-holder">
+        <canvas id="glcanvas" width="600" height="500" style="border: solid 1px gray;"></canvas>
+    </div>
+
+</body>
+
+</html>

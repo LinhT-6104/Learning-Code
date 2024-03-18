@@ -5,8 +5,10 @@
     <meta charset="UTF-8">
     <title>COMP 274 - Đồ họa máy tính</title>
 
-    <script src="js/glsim.js"></script> <!-- load the OpenGL 1.1 simulation code -->
+    <script src="glsim.js"></script> <!-- load the OpenGL 1.1 simulation code -->
     <script>
+        angle = 0;
+        cartX = -450;
         frameNumber = 0;
 
         function transform() {
@@ -14,16 +16,8 @@
             frameNumber += 1;
         }
         
-        function drawTriangle(x, y, h, w, color = [255, 255, 0]) {
-            glBegin(GL_POLYGON);
-            glColor3ubv([255, 255, 0]);
-            glVertex2f(100, 0);
-            glVertex2f(0, 150);
-            glVertex2f(-100, 0);
-            glEnd();
-        }
-        
         function drawQuads(x,y,w,h, color = [255, 255, 0]) {
+            glPushMatrix();
             glBegin(GL_QUADS);
                 glColor3ubv(color);
                 glVertex2f(x-w/2, y-h/2);
@@ -31,28 +25,21 @@
                 glVertex2f(x+w/2, y+h/2);
                 glVertex2f(x+w/2, y-h/2);
             glEnd();
-        }
-        
-        function drawTrapezoid(x,y,w,h,color = [255, 255, 0]) {
-            glBegin(GL_QUADS);
-                glColor3ubv(color);
-                glVertex2f(x-(w/2)-70, y-h/2);
-                glVertex2f(x-(w/2), y+h/2);
-                glVertex2f(x+(w/2), y+h/2);
-                glVertex2f(x+(w/2)+70, y-h/2);
-            glEnd();
+            glPopMatrix();
         }
         
         function drawCircle(x,y,r,color = [255, 0, 0]) {
+            glPushMatrix();
             glBegin( GL_POLYGON);
-            glColor3ubv(color);
-            for (let i = 0; i < 64; i++) {
-                let angle = (2 * Math.PI * i) / 64;  // 6.2832 represents 2*PI
-                let cx = x + r/2 * Math.cos(angle);
-                let cy = y + r/2 * Math.sin(angle);
-                glVertex2f(cx, cy);
-            }
+                glColor3ubv(color);
+                for (let i = 0; i < 64; i++) {
+                    let angle1 = (2 * Math.PI * i) / 64;  // 6.2832 represents 2*PI
+                    let cx = x + r/2 * Math.cos(angle1);
+                    let cy = y + r/2 * Math.sin(angle1);
+                    glVertex2f(cx, cy);
+                }
             glEnd();
+            glPopMatrix();
         }
         
         function drawPoints(x,y,size,color = [0, 0, 0]) {
@@ -64,6 +51,7 @@
         }
         
         function drawMountain() {
+            glPushMatrix();
             glBegin(GL_POLYGON);
                 glColor3ubv([0, 150, 30]);
                 glVertex2f(-300, -300);
@@ -76,14 +64,18 @@
                 glVertex2f(300, -70);
                 glVertex2f(300, -300);
             glEnd();
+            glPopMatrix();
         }
         
         function drawRoad() {
+            glPushMatrix();
             drawQuads(0, -150, 600, 80, [100, 100, 150]);   // Lan duong
             drawQuads(0, -150, 600, 6, [255, 255, 255]);    // Vach trang
+            glPopMatrix();
         }
         
         function drawLinesAround(x, y, r, numSpokes, color = [167, 167, 167]) {
+            glPushMatrix();
             glBegin(GL_LINES);
                 glColor3ubv(color);
                 for (let i = 0; i < numSpokes; i++) {
@@ -94,70 +86,99 @@
                     glVertex2f(lx, ly);
                 }
             glEnd();
+            glPopMatrix();
         }
         
         function drawWinmillBlades(x, y, w , h, color = [200, 100, 100]) {
             glPushMatrix();
-            glColor3ubv(color);
-            glTranslatef(x,y,0);
-            for (let i = 0; i < 3; i++) {
-                glRotated(120, 0, 0, 1);
-                glBegin(GL_QUADS);
-                    glVertex2f(0,0);
-                    glVertex2f(-w/2, h/3);
-                    glVertex2f(0, h);
-                    glVertex2f(w/2, h/3);
-                glEnd();   
-            }
+                glColor3ubv(color);
+                glTranslatef(x,y,0);
+                glRotatef(angle, 0, 0, 1);
+                for (let i = 0; i < 3; i++) {
+                    glRotated(120, 0, 0, 1);
+                    glBegin(GL_QUADS);
+                        glVertex2f(0,0);
+                        glVertex2f(-w/2, h/3);
+                        glVertex2f(0, h);
+                        glVertex2f(w/2, h/3);
+                    glEnd();   
+                }
             glPopMatrix();
         }
         
         function drawWinmill() {
-            // Cot 1
-            drawQuads(-236, 40, 10, 180, [170, 153, 153]);
-            drawWinmillBlades(-236, 131, 11, 84);
+            glPushMatrix();
+                // Cot 1
+                drawQuads(-236, 40, 10, 180, [170, 153, 153]);
+                drawWinmillBlades(-236, 131, 11, 84);
+                
+                // Cot 2
+                drawQuads(-112, 40, 10, 120, [170, 153, 153]);
+                drawWinmillBlades(-112, 100, 8, 55);
+                
+                // Cot 3
+                drawQuads(17, 35, 10, 210, [170, 153, 153]);
+                drawWinmillBlades(17, 141, 14, 99);
             
-            // Cot 2
-            drawQuads(-112, 40, 10, 120, [170, 153, 153]);
-            drawWinmillBlades(-112, 100, 8, 55);
-            
-            // Cot 3
-            drawQuads(17, 35, 10, 210, [170, 153, 153]);
-            drawWinmillBlades(17, 141, 14, 99);
-            
+            glPopMatrix();
         }
         
-        function drawSun() {
-            drawLinesAround(171, 180, 60, 12, [215, 155, 74]);
-            drawCircle(171, 180, 86, [212, 164, 112]);
-            drawCircle(171, 180, 82, [255, 255, 0]);
+        function drawSun(x,y){
+            glPushMatrix();
+                glTranslated(x,y,0);
+                glRotatef(angle,0,0,1);
+                    drawLinesAround(0,0,70,10,[217,137,130]);
+                    drawCircle(0, 0, 86, [212, 164, 112]);
+                    drawCircle(0, 0, 82, [255, 255, 0]);
+            glPopMatrix();
         }
         
-        function drawVehicle() {
-            // Banh ben trai
-            drawCircle(-73, -153, 45, [0, 0, 0]);   // Vanh xe
-            drawCircle(-73, -153, 36, [204, 204, 204]); // Ben trong vanh
-            drawLinesAround(-73, -153, 18, 12); // Nan hoa
-            drawPoints(-73, -153, 8);  // Cham tron
-            
-            // Banh ben phai
-            drawCircle(13, -153, 45, [0, 0, 0]);    // Vanh xe
-            drawCircle(13, -153, 36, [204, 204, 204]);  // Ben trong vanh
-            drawLinesAround(13, -153, 18, 12); // Nan hoa
-            drawPoints(13, -153, 8);   // Cham tron
-            
-            // Than xe
-            drawQuads(-30, -120, 155, 45, [255, 0, 0]); // Than duoi
-            drawQuads(-56, -86, 66, 23, [255, 0, 0]);   // Than tren
+        function drawVehicle(x,y) {
+            glPushMatrix();
+                glTranslatef(cartX, y, 0);
+                // Banh ben phai
+                glPushMatrix();
+                    glTranslatef(40, -32, 0);
+                    glRotatef(angle, 0, 0, -1);
+                        drawCircle(0, 0, 45, [0, 0, 0]);   // Vanh xe
+                        drawCircle(0, 0, 36, [204, 204, 204]); // Ben trong vanh
+                        drawLinesAround(0, 0, 18, 12); // Nan hoa
+                        drawPoints(0, 0, 8);  // Cham tron
+                glPopMatrix();
+                
+                // Banh ben trai
+                glPushMatrix();
+                    glTranslatef(-43, -32, 0);
+                    glRotatef(angle, 0, 0, -1);
+                        drawCircle(0, 0, 45, [0, 0, 0]);    // Vanh xe
+                        drawCircle(0, 0, 36, [204, 204, 204]);  // Ben trong vanh
+                        drawLinesAround(0, 0, 18, 12); // Nan hoa
+                        drawPoints(0, 0, 8);   // Cham tron
+                glPopMatrix();
+                
+                // Than xe
+                drawQuads(0, 0, 155, 45, [255, 0, 0]);      // Than duoi
+                drawQuads(-30, 34, 70, 24, [255, 0, 0]);    // Than tren
+            glPopMatrix();
+        }
+        
+        function transform() {
+            angle += 0.3;
+            cartX += 0.5;
         }
         
         function draw() {
             glClear(GL_COLOR_BUFFER_BIT);
             drawMountain();
             drawRoad();
-            drawVehicle();
+            drawVehicle(-30, -120);
             drawWinmill();
-            drawSun();
+            drawSun(170, 170);
+            transform();
+            if (cartX > 400) {
+                cartX -= 900;
+            }
+            requestAnimationFrame(draw);
         }
 
         function initGL() {

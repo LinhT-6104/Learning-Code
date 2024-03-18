@@ -1,0 +1,226 @@
+    <!DOCTYPE html>
+    <html>
+
+    <head>
+        <meta charset="UTF-8">
+        <title>COMP 274 - Đồ họa máy tính</title>
+
+        <script src="glsim.js"></script> <!-- load the OpenGL 1.1 simulation code -->
+        <script>
+            angle = 0;
+            frameNumber = 0;
+            index_X = -400;
+
+            function transform() {
+                glClear(GL_COLOR_BUFFER_BIT); // Fills the scene with blue.
+                frameNumber += 1;
+            }
+            
+            // Ve hinh tron
+            function circle(x, y, r, color = [255, 0, 0]) {
+                glPushMatrix();
+                    glBegin(GL_POLYGON);
+                        glColor3ubv(color);
+                        for (let i = 0; i < 128; i++) {
+                            let angle = (2 * Math.PI * i) / 128;  // 6.2832 represents 2*PI
+                            let cx = x + r * Math.cos(angle);
+                            let cy = y + r * Math.sin(angle);
+                            glVertex2f(cx, cy);
+                        }
+                    glEnd();
+                glPopMatrix();
+            }
+            
+            // Ve hinh chu nhat
+            function quad(x, y, w, h, color = [255, 255, 0]) {
+                glPushMatrix();
+                    glTranslatef(x-w/2,y-h/2,0);
+                    glBegin(GL_QUADS);
+                        glColor3ubv(color);
+                        glVertex2f(0,0);
+                        glVertex2f(0,h);
+                        glVertex2f(w,h);
+                        glVertex2f(w,0)
+                    glEnd();
+                glPopMatrix();
+            }
+            
+            // Ve diem
+            function point(x, y, size, color = [0, 0, 0]) {
+                glPushMatrix();
+                    glPointSize(size);
+                    glBegin(GL_POINTS);
+                        glColor3ubv(color)
+                        glVertex2f(x,y);
+                    glEnd();
+                glPopMatrix();
+            }
+            
+            // Ve nui
+            function drawMountain(color = [0, 150, 30]) {
+                glBegin(GL_POLYGON);
+                    glColor3ubv(color);
+                    glVertex2f(-300, -300);
+                    glVertex2f(-300, -70);
+                    glVertex2f(-170, 15);
+                    glVertex2f(-145, -20);
+                    glVertex2f(-42, 60);
+                    glVertex2f(103, -80);
+                    glVertex2f(222, -30);
+                    glVertex2f(300, -70);
+                    glVertex2f(300, -300);
+                glEnd();
+            }
+            
+            // Ve duong
+            function drawRoad(x, y, w, h) {
+                glPushMatrix();
+                    glTranslatef(x, y, 0);
+                        quad(0, 0, w, h, [100, 100, 150]);   // Lan duong
+                        quad(0, 0, w, 6, [255, 255, 255]);  // Vach ke duong
+                glPopMatrix();
+            }
+            
+            // Ve nan hoa
+            function drawLinesAround(x, y, r, numSpokes, color = [167, 167, 167]) {
+                glPushMatrix();
+                    for (let i = 0; i < numSpokes; i++) {
+                        let theta = i * ((2 * Math.PI) / numSpokes);
+                        let Lx = x + r * Math.cos(theta);
+                        let Ly = y - r * Math.sin(theta);
+                        glBegin(GL_LINES);
+                            glColor3ubv(color);
+                            glVertex2f(x,y);
+                            glVertex2f(Lx, Ly);
+                        glEnd();
+                    }
+                glPopMatrix();
+            }
+            
+            // Ve mat troi
+            function drawSun(x, y) {
+                glPushMatrix();
+                    glTranslatef(x, y, 0);
+                    glRotatef(angle, 0, 0, 1);
+                    drawLinesAround(0, 0, 70, 10, [217,137,130]);
+                    circle(0, 0, 43, [212, 164, 112]);
+                    circle(0, 0, 41, [255, 255, 0]);
+                glPopMatrix();
+            }
+            
+            function drawWindmill(x, y, w, h) {
+                // Ve cot:
+                quad(x, y, w, h, [170, 153, 153]);
+                // Ve canh:
+                glPushMatrix();
+                    glColor3ubv([200, 100, 100]);
+                    glTranslatef(x, y + h/2, 0);
+                    glRotatef(angle, 0, 0, 1);
+                    for (let i = 0; i < 3; i++) {
+                        glRotated(120, 0, 0, 1);
+                        glBegin(GL_QUADS);
+                            glVertex2f(0, 0);
+                            glVertex2f(-w/1.7, h/8);
+                            glVertex2f(0, h/2.4);
+                            glVertex2f(w/1.7, h/8);
+                        glEnd();   
+                    }
+                glPopMatrix();
+            }
+            
+            function drawCar(x, y, w, h , color = [255, 0, 0]) {
+                glPushMatrix();
+                    glTranslatef(index_X, y, 0);
+                    // Banh trai
+                    glPushMatrix();
+                        glTranslatef(-w/2.4 * 2/3, -h/2 * 3/2, 0);
+                        glRotatef(angle, 0, 0, -1);
+                        circle(0, 0, 21 , [0, 0, 0]);   // Vanh xe
+                        circle(0, 0, 17, [204, 204, 204]); // Ben trong vanh
+                        drawLinesAround(0, 0, 17, 12);  // Nan hoa
+                        circle(0, 0, 4.5, [0, 0, 0]);
+                    glPopMatrix();
+                    
+                    // Banh phai
+                    glPushMatrix();
+                        glTranslatef(w/2.4 * 2/3, -h/2 * 3/2, 0);
+                        glRotatef(angle, 0, 0, -1);
+                        circle(0, 0, 21 , [0, 0, 0]);   // Vanh xe
+                        circle(0, 0, 17, [204, 204, 204]); // Ben trong vanh
+                        drawLinesAround(0, 0, 17, 12);  // Nan hoa
+                        circle(0, 0, 4.5, [0, 0, 0]);
+                    glPopMatrix();
+                
+                    // Than duoi
+                    quad(0, 0, w, h, color);
+                    
+                    // Than tren
+                    quad(-35, h * 2/3, w / 3, h / 3, color);
+                glPopMatrix();
+            }
+            
+            function transform() {
+                angle += 1.5;
+                index_X += 1.5;
+            }
+            
+            function draw() {
+                glClear(GL_COLOR_BUFFER_BIT);
+                drawMountain([0, 150, 30]);
+                drawRoad(0, -150, 600, 80);
+                drawSun(170, 170);
+                drawWindmill(-236, 40, 7, 180);
+                drawWindmill(-112, 40, 7, 120);
+                drawWindmill(17, 35, 7, 210);
+                drawCar(-30, -120, 155, 45);
+                transform();
+                if (index_X > 380) {
+                    index_X -= 900;
+                }
+                requestAnimationFrame(draw);
+            }
+
+            function initGL() {
+                glClearColor(0.78, 0.78, 1, 1);
+                // The next three lines set up the coordinates system.
+                glMatrixMode(GL_PROJECTION);
+                glLoadIdentity();
+                glOrtho(-300, 300, -250, 250, -1, 1);
+                glMatrixMode(GL_MODELVIEW);
+                glEnable(GL_POINT_SMOOTH);
+            }
+
+            function init() {  // Called by <body onload="init()">, when the page has loaded.
+                try {
+                    glsimUse("glcanvas"); // OpenGL will draw to the canvas with id="glcanvas".
+                }
+                catch (e) {
+                    document.getElementById("canvas-holder").innerHTML =
+                        "Sorry, an error occured:<br>" + e;
+                    return;
+                }
+                initGL();
+                draw();
+            }
+
+            window.onload = init;
+
+        </script>
+
+    </head>
+
+    <body>
+
+        <h3>COMP 274 - Đồ họa máy tính</h3>
+
+        <noscript>
+            <p><b>Sorry, this page requires JavaScript!</b></p>
+        </noscript>
+
+        <div id="canvas-holder">
+            <canvas id="glcanvas" width="600" height="500" style="border: solid 1px gray;"></canvas>
+        </div>
+
+    </body>
+
+    </html>

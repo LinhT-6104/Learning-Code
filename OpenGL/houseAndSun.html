@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>COMP 274 - Đồ họa máy tính</title>
+
+    <script src="glsim.js"></script> <!-- load the OpenGL 1.1 simulation code -->
+    <script>
+        frameNumber = 0;
+
+        function transform() {
+            glClear(GL_COLOR_BUFFER_BIT); // Fills the scene with blue.
+            frameNumber += 1;
+        }
+        
+        function drawTriangle(x,y,w,h,color = [223,157,43]){
+            glBegin(GL_POLYGON);
+            glColor3ubv(color);
+            glVertex2f(x,y);
+            glVertex2f(x+w,y);
+            glVertex2f(x,y+h);
+            glEnd();
+        }
+        
+        function drawSquare(x,y,w,h, color = [0,120,120]){
+            glBegin(GL_POLYGON);
+            glColor3ubv(color);
+            glVertex2f(x-w/2,y+h/2);
+            glVertex2f(x+w/2,y+h/2);
+            glVertex2f(x+w/2,y-h/2);
+            glVertex2f(x-w/2,y-h/2);
+            glEnd();
+        }
+        function drawCircle(x, y, radius, num_segments, color = [218,126,65]) {
+            glBegin(GL_POLYGON);
+            glColor3ubv(color);
+            for (let i = 0; i < num_segments; i++) {
+                let theta = 2.0 * Math.PI * i / num_segments;
+                let cx = radius * Math.cos(theta);
+                let cy = radius * Math.sin(theta);
+                glVertex2f(x + cx, y + cy);
+            }
+            glEnd();
+        }
+        function draw() {
+            // setInterval(transform, 1000 / 24)
+            drawTriangle(100,100,100,100);//right roof
+            drawTriangle(-100,100,-100,100);//left roof
+            drawSquare(0,100,200,200,[223,157,43]);//main roof
+            drawSquare(0,0,300,200);
+            drawSquare(-70,40,40,40,[43,233,121]);//left window
+            drawSquare(70,40,40,40,[43,233,121]);//right window
+            drawSquare(0,-50,50,100,[43,233,121])//door
+            drawCircle(230,190,53,50, [255,31,31]);//sun outline
+            drawSquare(230,230,5,200,[255,31,31]);//sun line
+            drawSquare(230,190,130,5,[255,31,31]);//sun line
+            drawCircle(230,190,50,50); // sun
+            
+        }
+
+        function initGL() {
+            glClearColor(0.9, 0.9, 0.9, 1);
+            // The next three lines set up the coordinates system.
+            glMatrixMode(GL_PROJECTION);
+            glLoadIdentity();
+            glOrtho(-300, 300, -250, 250, -1, 1);
+            glMatrixMode(GL_MODELVIEW);
+
+            glEnable(GL_POINT_SMOOTH);
+        }
+
+        function init() {  // Called by <body onload="init()">, when the page has loaded.
+            try {
+                glsimUse("glcanvas"); // OpenGL will draw to the canvas with id="glcanvas".
+            }
+            catch (e) {
+                document.getElementById("canvas-holder").innerHTML =
+                    "Sorry, an error occured:<br>" + e;
+                return;
+            }
+            initGL();
+            draw();
+        }
+
+        window.onload = init;
+
+    </script>
+
+</head>
+
+<body>
+
+    <h3>COMP 274 - Đồ họa máy tính</h3>
+
+    <noscript>
+        <p><b>Sorry, this page requires JavaScript!</b></p>
+    </noscript>
+
+    <div id="canvas-holder">
+        <canvas id="glcanvas" width="600" height="500" style="border: solid 1px gray;"></canvas>
+    </div>
+
+</body>
+
+</html>

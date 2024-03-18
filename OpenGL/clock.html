@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>COMP 274 - Đồ họa máy tính</title>
+
+    <script src="glsim.js"></script> <!-- load the OpenGL 1.1 simulation code -->
+    <script>
+        var frameNumber = 0;
+        var loop = loop || 0;
+        var fps = 1;
+
+        // Ve hinh tron
+        function circle(x, y, r, color = [255, 0, 0]) {
+            glPushMatrix();
+            glBegin(GL_POLYGON);
+            glColor3ubv(color);
+            for (let i = 0; i < 128; i++) {
+                let frameNumber = (2 * Math.PI * i) / 128; // 6.2832 represents 2*PI
+                let cx = x + r * Math.cos(frameNumber);
+                let cy = y + r * Math.sin(frameNumber);
+                glVertex2f(cx, cy);
+            }
+            glEnd();
+            glPopMatrix();
+        }
+
+        // Ve hinh chu nhat
+        function quad(x, y, w, h, color = [255, 255, 0]) {
+            glPushMatrix();
+            glTranslatef(x - w / 2, y - h / 2, 0);
+            glBegin(GL_QUADS);
+            glColor3ubv(color);
+            glVertex2f(0, 0);
+            glVertex2f(0, h);
+            glVertex2f(w, h);
+            glVertex2f(w, 0);
+            glEnd();
+            glPopMatrix();
+        }
+
+        function transform() {
+            var d = new Date();
+            var h = d.getHours();
+            var m = d.getMinutes();
+            var s = d.getSeconds();
+            frameNumber = (h * 3600 + m * 60 + s) * 6;
+            glClear(GL_COLOR_BUFFER_BIT); // Fills the scene with blue.
+            frameNumber += 6;
+            circle(0, 0, 200, [0, 0, 0]);
+            circle(0, 0, 190, [255, 255, 255]);
+
+            circle(0, 0, 10, [209, 188, 141]);
+
+            glPushMatrix();
+            for (let i = 0; i < 60; i++) { // Declare 'i' with 'let'
+                // if (i % 5 == 0)
+                //     quad(0, 180, 4, 10, [0, 0, 0])
+                // else
+                //     quad(0, 180, 2, 10, [0, 0, 0])
+                quad(0, 180, i % 5 == 0 ? 5 : 2, 10, [0, 0, 0]);
+                glRotatef(6, 0, 0, 1);
+            }
+            glPopMatrix();
+            
+            // Ve kim gio
+            glPushMatrix();
+                glRotatef(frameNumber/(60*12), 0, 0, -1)
+                glBegin(GL_POLYGON);
+                    glVertex2f(-5, 0);
+                    glVertex2f(-5, 80);
+                    glVertex2f(5, 80);
+                    glVertex2f(5, 0);
+                glEnd();
+            glPopMatrix();
+
+            // Ve kim phut
+            glPushMatrix();
+                glRotatef(frameNumber/60, 0, 0, -1)
+                glBegin(GL_POLYGON);
+                    glVertex2f(-4, 0);
+                    glVertex2f(-4, 150);
+                    glVertex2f(4, 150);
+                    glVertex2f(4, 0)
+                glEnd();
+            glPopMatrix();
+
+            // Ve kim giay
+            glPushMatrix();
+                glRotatef(frameNumber, 0, 0, -1);
+                glBegin(GL_POLYGON);
+                    glVertex2f(2, -50);
+                    glVertex2f(-2, -50);
+                    glVertex2f(-1, 150);
+                    glVertex2f(1, 150);
+                glEnd();
+            glPopMatrix();
+        
+            circle(0, 0, 5, [0, 0, 0]);   
+            circle(0, 0, 3, [222, 198, 134]);
+        }
+
+        function draw() {
+            loop && clearInterval(loop);
+            loop = setInterval(transform, 1000 / fps);
+        }
+
+        function initGL() {
+            glClearColor(0.9, 0.9, 0.9, 1);
+            // The next three lines set up the coordinates system.
+            glMatrixMode(GL_PROJECTION);
+            glLoadIdentity();
+            glOrtho(-400, 400, -400, 400, -1, 1);
+            glMatrixMode(GL_MODELVIEW);
+            glEnable(GL_POINT_SMOOTH);
+        }
+
+        function init() { // Called by <body onload="init()">, when the page has loaded.
+            try {
+                glsimUse("glcanvas"); // OpenGL will draw to the canvas with id="glcanvas".
+            } catch (e) {
+                document.getElementById("canvas-holder").innerHTML =
+                    "Sorry, an error occured:<br>" + e;
+                return;
+            }
+            initGL();
+            draw();
+        }
+
+        window.onload = init;
+
+    </script>
+
+</head>
+
+<body>
+
+    <h3>COMP 274 - Đồ họa máy tính</h3>
+
+    <noscript>
+        <p><b>Sorry, this page requires JavaScript!</b></p>
+    </noscript>
+
+    <div id="canvas-holder">
+        <canvas id="glcanvas" width="800" height="800" style="border: solid 1px gray;"></canvas>
+    </div>
+
+</body>
+
+</html>

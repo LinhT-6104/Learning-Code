@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>COMP 274 - Đồ họa máy tính</title>
+
+    <script src="glsim.js"></script> <!-- load the OpenGL 1.1 simulation code -->
+    <script>
+        var frameNumber = 0, camera;
+        
+        function drawSphere(radius, slices, stacks){
+            var i,j;
+            for (j = 0; j < stacks; j++) {
+                var latitude1 = (Math.PI/stacks) * j - Math.PI/2;
+                var latitude2 = (Math.PI/stacks) * (j+1) - Math.PI/2;
+                var sinLat1 = Math.sin(latitude1);
+                var cosLat1 = Math.cos(latitude1);
+                var sinLat2 = Math.sin(latitude2);
+                var cosLat2 = Math.cos(latitude2);
+                glBegin(GL_LINE_LOOP);
+                for (i = 0; i <= slices; i++) {
+                    var longitude = (2*Math.PI/slices) * i;
+                    var sinLong = Math.sin(longitude);
+                    var cosLong = Math.cos(longitude);
+                    var x1 = cosLong * cosLat1;
+                    var y1 = sinLong * cosLat1;
+                    var z1 = sinLat1;
+                    var x2 = cosLong * cosLat2;
+                    var y2 = sinLong * cosLat2;
+                    var z2 = sinLat2;
+                    glNormal3d(x2,y2,z2);
+            	    glVertex3d(radius*x2,radius*y2,radius*z2);
+            	    glNormal3d(x1,y1,z1);
+                    glVertex3d(radius*x1,radius*y1,radius*z1);
+                }
+                glEnd();
+            }
+        }
+
+        function transform() {
+            glClear(GL_COLOR_BUFFER_BIT || GL_DEPTH_BUFFER_BIT ); // Fills the scene with blue.
+            frameNumber += 1;
+        }
+
+        function draw() {
+            camera.apply();
+            glClear(GL_COLOR_BUFFER_BIT || GL_DEPTH_BUFFER_BIT );
+            drawSphere(10, 64, 32);
+        }
+
+        function initGL() {
+            glClearColor(0.9, 0.9, 0.9, 1);
+            // The next three lines set up the coordinates system.
+            glMatrixMode(GL_PROJECTION);
+            glLoadIdentity();
+            // glOrtho(-300, 300, -250, 250, -300, 300);
+            glMatrixMode(GL_MODELVIEW);
+            glEnable(GL_DEPTH_TEST);
+            // glEnable(GL_LIGHTING);
+        }
+
+        function init() {  // Called by <body onload="init()">, when the page has loaded.
+            try {
+                glsimUse("glcanvas"); // OpenGL will draw to the canvas with id="glcanvas".
+            }
+            catch (e) {
+                document.getElementById("canvas-holder").innerHTML =
+                    "Sorry, an error occured:<br>" + e;
+                return;
+            }
+            initGL();
+            camera = new Camera();
+            camera.lookAt(0, 0, 30, 0, 0, 0, 0, 1, 0);
+            camera.setScale(15);
+            camera.installTrackball(draw);
+            draw();
+        }
+
+        window.onload = init;
+
+    </script>
+
+</head>
+
+<body>
+
+    <h3>COMP 274 - Đồ họa máy tính</h3>
+
+    <noscript>
+        <p><b>Sorry, this page requires JavaScript!</b></p>
+    </noscript>
+
+    <div id="canvas-holder">
+        <canvas id="glcanvas" width="600" height="500" style="border: solid 1px gray;"></canvas>
+    </div>
+
+</body>
+
+</html>
