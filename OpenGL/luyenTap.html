@@ -13,9 +13,50 @@
 
         function transform() {
             glClear(GL_COLOR_BUFFER_BIT); // Fills the scene with blue.
-            frameNumber += 2;
-
+            frameNumber += 1;
+            // Nui
+            drawMountain();
+            // Duong
+            drawRectangle(300, 400, 600, 100,[100, 100, 150]);
+            drawRectangle(300, 400, 600, 5, [255, 255, 255]);
+            // Cot xay gio
+            drawRectangle(100, 200, 5, 150, [170, 153, 153]);
+            drawRectangle(200, 200, 5, 100, [170, 153, 153]);
+            drawRectangle(300, 200, 5, 200, [170, 153, 153]);
+            // Mat troi
+            glPushMatrix();
+            glTranslatef(200, 160, 0);
+            glRotatef(frameNumber, 0, 0, 1)
+                drawLinesAround(0, 0, 60, 12, [222, 153, 153]);
+                drawCircle(0, 0, 43, [255, 212, 0])
+                drawCircle(0, 0, 40);
+            glPopMatrix();
+            // Xe
+            drawCircle(40, -150, 20, [0, 0, 0]);
+            drawCircle(-40, -150, 20, [0, 0, 0]);
+            drawCircle(40, -150, 15, [204, 204, 204]);
+            drawCircle(-40, -150, 15, [204, 204, 204]);
+            drawLinesAround(40, -150, 15, 12, [172, 172, 172]);
+            drawLinesAround(-40, -150, 15, 12, [172, 172, 172]);
+            drawCircle(-40, -150, 5, [0, 0, 0]);
+            drawRectangle(300, 365, 150, 50, [255, 0, 0]);
+            drawRectangle(260, 334, 40, 15, [255, 0, 0]);
         }
+
+        function drawMountain(color = [0, 150, 30]) {
+                glBegin(GL_POLYGON);
+                    glColor3ubv(color);
+                    glVertex2f(-300, -300);
+                    glVertex2f(-300, -70);
+                    glVertex2f(-170, 15);
+                    glVertex2f(-145, -20);
+                    glVertex2f(-42, 60);
+                    glVertex2f(103, -80);
+                    glVertex2f(222, -30);
+                    glVertex2f(300, -70);
+                    glVertex2f(300, -300);
+                glEnd();
+            }
 
         function drawCircle(x, y, r, color = [255, 255, 0]) {
             glColor3ubv(color);
@@ -34,8 +75,8 @@
             glBegin(GL_LINES);
             for (let i = 0; i < numSpokes; i++) {
                 let theta = 2 * Math.PI * i / numSpokes;
-                let lx = x + (26 + 13) * Math.cos(theta);
-                let ly = y - (26 + 13) * Math.sin(theta);
+                let lx = x + r * Math.cos(theta);
+                let ly = y - r * Math.sin(theta);
                 glVertex2f(x, y);
                 glVertex2f(lx, ly);
             }
@@ -58,7 +99,7 @@
         }
 
         function initGL() {
-            glClearColor(1, 1, 1, 1);
+            glClearColor(1, 1, 0.6, 1);
             // The next three lines set up the coordinates system.
             glMatrixMode(GL_PROJECTION);
             glLoadIdentity();
