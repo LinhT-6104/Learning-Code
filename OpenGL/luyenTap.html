@@ -13,7 +13,7 @@
 
         function transform() {
             glClear(GL_COLOR_BUFFER_BIT); // Fills the scene with blue.
-            frameNumber += 1;
+            frameNumber += 3;
             // Nui
             drawMountain();
             // Duong
@@ -26,21 +26,36 @@
             // Mat troi
             glPushMatrix();
             glTranslatef(200, 160, 0);
-            glRotatef(frameNumber, 0, 0, 1)
+            glRotatef(frameNumber, 0, 0, -1);
                 drawLinesAround(0, 0, 60, 12, [222, 153, 153]);
                 drawCircle(0, 0, 43, [255, 212, 0])
                 drawCircle(0, 0, 40);
             glPopMatrix();
             // Xe
-            drawCircle(40, -150, 20, [0, 0, 0]);
-            drawCircle(-40, -150, 20, [0, 0, 0]);
-            drawCircle(40, -150, 15, [204, 204, 204]);
-            drawCircle(-40, -150, 15, [204, 204, 204]);
-            drawLinesAround(40, -150, 15, 12, [172, 172, 172]);
-            drawLinesAround(-40, -150, 15, 12, [172, 172, 172]);
-            drawCircle(-40, -150, 5, [0, 0, 0]);
-            drawRectangle(300, 365, 150, 50, [255, 0, 0]);
-            drawRectangle(260, 334, 40, 15, [255, 0, 0]);
+            glPushMatrix();
+            glTranslatef(40 + frameNumber , -150, 0);
+            glRotatef(frameNumber + 1, 0, 0, -1);
+                drawCircle(0, 0, 20, [0, 0, 0]);
+                drawCircle(0, 0, 15, [204, 204, 204]);
+                drawLinesAround(0, 0, 15, 12, [172, 172, 172]);
+                drawCircle(0, 0, 5, [0, 0, 0]);
+            glPopMatrix();
+
+            glPushMatrix();
+            glTranslatef(-40 + frameNumber, -150, 0);
+            glRotatef(frameNumber + 1, 0, 0, -1);
+                drawCircle(0, 0, 20, [0, 0, 0]);
+                drawCircle(0, 0, 15, [204, 204, 204]);
+                drawLinesAround(0, 0, 15, 12, [172, 172, 172]);
+                drawCircle(0, 0, 5, [0, 0, 0]);
+            glPopMatrix();
+
+            drawRectangle(300 + frameNumber, 365, 150, 50, [255, 0, 0]);
+            drawRectangle(260 + frameNumber, 334, 40, 15, [255, 0, 0]);
+
+            if (frameNumber > 370) {
+                frameNumber -= 800;
+            }
         }
 
         function drawMountain(color = [0, 150, 30]) {
