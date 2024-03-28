@@ -17,6 +17,7 @@ public class MainProgram_725105115 {
 		listHangHoa.add(new DienThoai("Iphone 15", "Mỹ", 2024, 26150000, "dt002", "iOS"));
 		listHangHoa.add(new DienThoai("Vinsmart 8", "Việt Nam", 2019, 7125000, "dt003", "Android"));
 		qlHangHoa.setListHH(listHangHoa);
+		qlHangHoa.nhapDuLieu();
 		qlHangHoa.hienThi();
 		qlHangHoa.hienThiMyPham();
 		qlHangHoa.hienThiDienThoai();

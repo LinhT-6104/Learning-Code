@@ -10,7 +10,7 @@ class ListNode:
             print(curNode.data)
             curNode = curNode.next
     
-    # Hàm tìm kiến
+    # Hàm tìm kiếm
     def unorderSearch(self, head, target):
         curNode = head
         while curNode is not None and curNode.data != target:
@@ -23,7 +23,6 @@ class ListNode:
         newNode.next = head
         head = newNode
         return newNode
-
 
     # Xóa một nút khỏi danh sách
     def deleteNode(self, head, target):

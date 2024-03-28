@@ -1,37 +1,45 @@
 package Tuan7;
 
 import java.io.Serializable;
-//import java.util.Scanner;
+import java.util.Scanner;
 
-public class HoaDon implements Serializable {
-	private String MaHD;
-	private Double TienHD;
+public class HoaDon implements Serializable{
+	private String maHD;
+	private double tongTienHD;
 	
-	public HoaDon() {
-		this.MaHD = "";
-		this.TienHD = 0.0;
+	public HoaDon() {}
+	public HoaDon(String maHD, double tongTienHD) {
+		super();
+		this.maHD = maHD;
+		this.tongTienHD = tongTienHD;
 	}
-	public HoaDon(String maHD, Double TienHD) {
-		this.MaHD = maHD;
-		this.TienHD = TienHD;
+	
+	public void nhapHoaDon() {
+		Scanner sc = new Scanner(System.in);
+		System.out.print("Nhập mã hóa đơn: ");
+		this.maHD = sc.nextLine();
+		System.out.print("Nhập tổng tiền hoán đơn: ");
+		this.tongTienHD = Double.parseDouble(sc.nextLine());
 	}
-
-//	Scanner sc = new Scanner(System.in);
-//	
-//	public void nhapDuLieu() {
-//		System.out.print("Nhập mã hóa đơn: ");
-//		this.MaHD = sc.next();
-//		System.out.print("Nhập tổng tiền hóa đơn: ");
-//		this.TienHD = Double.parseDouble(sc.next());
-//	}
 	
 	@Override
 	public String toString() {
-		return " [MaHD = " + MaHD + ", TienHD = " + TienHD + "],";
+		return "HoaDon [maHD=" + maHD + ", tongTienHD=" + tongTienHD + "]";
 	}
 	
-	public String getMaHD() { return MaHD; }
-	public void setMaHD(String maHD) { MaHD = maHD; }
-	public Double getTienHD() { return TienHD; }
-	public void setTienHD(Double TienHD) { this.TienHD = TienHD; }
+	// GETTER | SETTER
+	public String getMaHD() {
+		return maHD;
+	}
+	public void setMaHD(String maHD) {
+		this.maHD = maHD;
+	}
+	public double getTongTienHD() {
+		return tongTienHD;
+	}
+	public void setTongTienHD(double	 tongTienHD) {
+		this.tongTienHD = tongTienHD;
+	}
+	
+	
 }

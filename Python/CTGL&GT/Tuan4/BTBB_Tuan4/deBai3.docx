@@ -1,0 +1,10 @@
+Em hãy viết chương trình xoá một nút trong danh sách liên kết đơn
+
+Input:
+
+Giá trị đầu tiên n: số phần tử của danh sách
+n giá trị tiếp theo: giá trị của phần tử cần thêm vào đầu danh sách
+Giá trị cuối cùng: giá trị cần tìm kiếm
+Output:
+
+các giá trị của danh sách được in theo thứ tự từ nút đầu đến nút cuối sau khi xoá nút

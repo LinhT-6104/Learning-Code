@@ -16,10 +16,10 @@ public class HangHoa implements Serializable {
 		this.namSX = namSX;
 		this.donGia = donGia;
 	}
-	@Override
-	public String toString() {
-		return "HangHoa [tenHH=" + tenHH + ", xuatXu=" + xuatXu + ", namSX=" + namSX + ", donGia=" + donGia + "]";
-	}
+//	@Override
+//	public String toString() {
+//		return "HangHoa [tenHH=" + tenHH + ", xuatXu=" + xuatXu + ", namSX=" + namSX + ", donGia=" + donGia + "]";
+//	}
 	
 	public void nhapDuLieu() {
 		Scanner sc = new Scanner(System.in);

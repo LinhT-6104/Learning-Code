@@ -56,7 +56,7 @@ public class XuLyDocGhiFile {
 		String filePath = dirPath + fileName;
 		
 		File directoty = new File(dirPath);
-		if (!directoty .exists()) {		// Nếu chưa có thư mục thì tạo mới
+		if (!directoty.exists()) {		// Nếu chưa có thư mục thì tạo mới
 			directoty.mkdirs();
 		}
 		

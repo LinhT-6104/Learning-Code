@@ -1,0 +1,9 @@
+Em hãy viết chương trình nhập vào n giá trị, mỗi giá trị nhập vào được chèn vào đầu danh sách liên kết và in các giá trị của danh sách.
+
+Input:
+
+Giá trị đầu tiên: số phần tử của danh sách
+Các giá trị tiếp theo: giá trị của phần tử cần thêm vào đầu danh sách
+Output:
+
+các giá trị của danh sách được in theo thứ tự từ nút đầu đến nút cuối
