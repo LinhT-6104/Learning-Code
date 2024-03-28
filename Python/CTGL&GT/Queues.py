@@ -16,6 +16,13 @@ class Queue:    # Đầu bên trái, đuôi bên phải
     def length(self):
         return self.size
     
+    def getHead(self):
+        if self.isEmpty():
+            print("Hàng đợi rỗng.")
+            return None
+        else:
+            return self.head.data
+
     def enqueue(self, x):
         newNode = Node(x)
         if self.isEmpty():
@@ -34,13 +41,6 @@ class Queue:    # Đầu bên trái, đuôi bên phải
             self.head = self.head.next
             self.size -= 1
             return removed
-    
-    def getHead(self):
-        if self.isEmpty():
-            print("Hàng đợi rỗng.")
-            return None
-        else:
-            return self.head.data
     
 # input preview
 queue = Queue()

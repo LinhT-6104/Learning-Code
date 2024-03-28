@@ -1,15 +1,8 @@
-class Node :
-    def __init__(self, data):
-        self.data = data
-        self.next = None
-        self.prev = None
+def deQuy(n):
+    if n == 0:
+        return 1
+    else:
+        return (2*n+1) * deQuy(n-1)
 
-class DoublyLinkedList:
-    def __init__(self):
-        self.size = 0
-        self.head = None
-        self.tail = None
-
-    def clear(self, head):
-        curNode = head
-        
+n = 2
+print(deQuy(2))s

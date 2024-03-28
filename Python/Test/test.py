@@ -1,6 +1,7 @@
 class Node:
     def __init__(self, data):
         self.data = data
+        self.next = None
 
 class Stack:
     def __init__(self):
@@ -13,7 +14,7 @@ class Stack:
     def getTop(self):
         if self.isEmpty():
             return None
-        return self.top
+        return self.top.data
     
     def length(self):
         return self.size

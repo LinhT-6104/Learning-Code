@@ -63,3 +63,5 @@ for _ in range(n):
 d = int(input())
 myList.delete(d)
 myList.show()
+
+
