@@ -88,7 +88,7 @@ public class QuanLyHH {
 				}
 			}
 		}
-		return count;
+		return (int)count;
 	}
 	
 	public void xoaOto() {

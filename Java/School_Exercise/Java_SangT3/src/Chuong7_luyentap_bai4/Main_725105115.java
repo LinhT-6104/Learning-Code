@@ -13,7 +13,7 @@ import java.util.ArrayList;
 // Mã SV: 725105115
 public class Main_725105115 {
 	public static void main(String[] args) {
-		QuanLyGVHS qlgvhs = new Qua+nLyGVHS();
+		QuanLyGVHS qlgvhs = new QuanLyGVHS();
 		
 		ArrayList<NhanSu> listgvhs = new ArrayList<>();
 		listgvhs.add(new HocSinh("A", "hs1", 2014, "Hà Nội", 0, "E3", 9.0));

@@ -43,19 +43,19 @@ class BinaryTree:
     def preorder(self, root):
         if root is not None:
             print(root.data)
-            preorder(root.left)
-            preorder(root.right)
+            self.preorder(root.left)
+            self.preorder(root.right)
 
     def midorder(self, root):
         if root is not None:
-            midorder(root.left)
+            self.midorder(root.left)
             print(root.data)
-            midorder(root.right)
+            self.midorder(root.right)
 
     def lastorder(self, root):
         if root is not None:
-            midorder(root.left)
-            midorder(root.right)
+            self.midorder(root.left)
+            self.midorder(root.right)
             print(root.data)
 
 tree = BinaryTree()

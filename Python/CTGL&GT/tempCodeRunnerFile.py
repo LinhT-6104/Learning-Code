@@ -1,2 +1,6 @@
-current_node = queue.pop(0)
-        print(current_node.data)
+ mid + 1, last + 1, tmpArray)
+
+def mergeSort(theSeq):
+    n = len(theSeq)
+
+    tm

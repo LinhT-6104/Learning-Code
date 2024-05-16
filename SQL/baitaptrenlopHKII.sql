@@ -5,11 +5,11 @@ from vendors
 order by vendor_contact_last_name, vendor_contact_first_name;
 
 -- Câu 9:
-select CONCAT(vendor_contact_last_name,', ', vendor_contact_first_name) as full_name
+select CONCAT(vendor_contact_last_name,', ', vendor_contact_first_name) as full_name, count(*)
 from vendors
-where left(vendor_contact_last_name, 1) in ('A', 'B', 'C', 'E');
-order by vendor_contact_last_name, vendor_contact_first_name
-
+where left(vendor_contact_last_name, 1) in ('A', 'B', 'C', 'E')
+order by vendor_contact_last_name, vendor_contact_first_name;
+use ap_725105115;
 -- Câu 10:
 SELECT
 	invoice_due_date AS "Due Date",

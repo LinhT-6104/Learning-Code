@@ -8,7 +8,7 @@ public class Main_725105115 {
 	public static void main(String[] args) {
 		ArrayList<HangHoa> listHH = new ArrayList<HangHoa>();
 		
-		listHH.add(new SmartPhone("MaDT1", "DT1", 2400000, 5000, "Android", 4000, true));
+		listHH.add(new SmartPhone("MaDT1", "DT1", 2400000, 5000, "Android", 40009, true));
         listHH.add(new SmartPhone("MaDT4", "DT1", 2400000, 5000, "Android", 500, false));
         listHH.add(new SmartPhone("MaDT3", "DT3", 4200000, 5000, "Android", 45, false));
         listHH.add(new SmartPhone("MaDT2", "DT2", 1500000, 3000, "HDH2", 55000, true));
@@ -27,7 +27,7 @@ public class Main_725105115 {
 		System.out.println("\nCau b: " + qlhh.tongTienAndroid());
 		
 		// Câu c
-		System.out.println("\nCÂU : " + qlhh.demAndroidTM());
+		System.out.println("\nCÂU C: " + qlhh.demAndroidTM());
 		
 		// Câu d
 		qlhh.sapXep();

@@ -23,9 +23,7 @@ public class Bai3 {
 		qlhh.hienThiHH();
 		qlhh.hienThiMyPham();
 		qlhh.hienThiDienThoai();
-		
-		File file = new File();
-		
+				
 		FileOutputStream foStream = null;
 		ObjectOutputStream objoStream = null;
 		

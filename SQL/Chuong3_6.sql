@@ -5,10 +5,10 @@ from vendors
 order by vendor_contact_last_name, vendor_contact_first_name;
 
 -- Câu 9:
-select CONCAT(vendor_contact_last_name,', ', vendor_contact_first_name) as full_name
+select CONCAT(vendor_contact_last_name,', ', vendor_contact_first_name) as full_name, count(*)
 from vendors
-where left(vendor_contact_last_name, 1) in ('A', 'B', 'C', 'E');
-order by vendor_contact_last_name, vendor_contact_first_name
+where left(vendor_contact_last_name, 1) in ('A', 'B', 'C', 'E')
+order by vendor_contact_last_name, vendor_contact_first_name;
 
 -- Câu 10:
 SELECT
@@ -34,7 +34,7 @@ FROM
 WHERE
   invoice_total - (payment_total + credit_total) > 50
 ORDER BY
-  "Balance Due" DESC
+  invoice_total - (payment_total + credit_total) DESC
 LIMIT 5;
 
 -- Câu 12:
@@ -45,7 +45,7 @@ where payment_date is NULL;
 -- Câu 13:
 SELECT
   CURRENT_DATE AS "current_date",
-  DATE_FORMAT(CURRENT_DATE, 'Mon-dd-yyyy') AS "formatted_current_date";
+  DATE_FORMAT(CURRENT_DATE, '%m-%d-%Y') AS "formatted_current_date";
 
 -- Câu 14:
 SELECT
@@ -131,28 +131,28 @@ where terms_id = 6 and terms_description = 'Net due 120 days' and terms_due_days
 
 -- Câu 4:
 INSERT INTO invoices
-VALUES
-(
-  DEFAULT, 32, 'AX-014-027', '2018-08-01', 434.58, 0.00, 0.00, 2, '2018-08-31', NULL
-);
+VALUES (DEFAULT, 32, 'AX-014-027', '2014-08-01', 434.58, 0, 0, 2, '2014-08-31', NULL);
 
--- Câu 5:
-insert into invoice_line_items
-select max(invoice_id), 1, 160, '180.23', 'Hard drive'
-from invoice_line_items;
+-- ALTER TABLE invoices AUTO_INCREMENT = 114; --
 
-insert into invoice_line_items 
-select max(invoice_id), 2, 527, '254.35', 'Exchange Server update'
-from invoice_line_items;
+-- Câu 5: 
+select last_insert_id();
+-- SELECT * FROM INVOICES order by INVOICE_ID DESC;
+-- SELECT * FROM invoice_line_items order by INVOICE_ID DESC;
 
+INSERT INTO INVOICE_LINE_ITEMS
+VALUES (last_insert_id(), 1, 160, 180.23, 'Hard Drive');
+
+INSERT INTO INVOICE_LINE_ITEMS
+VALUES (last_insert_id(), 2, 527, 254.35, 'Exchange Server update');
 
 -- Câu 6:
 update invoices 
-set 
-	credit_total = 0.1 * invoice_total, 
-    payment_total = (select sum(payment_total) from invoices), 
-    credit_total = invoice_total
-WHERE invoice_id = 115;
+set credit_total = 0.1 * invoice_total, 
+    payment_total = invoice_total - (0.1 * invoice_total)
+WHERE invoice_id = last_insert_id();
+
+-- select * from invoices;
 
 -- Câu 7:
 UPDATE vendors set default_account_number = 403 WHERE vendor_id = 44;
@@ -167,11 +167,10 @@ WHERE vendor_id in (
 
 -- Câu 9:
 DELETE FROM invoice_line_items
-WHERE invoice_id = (SELECT invoice_id FROM invoices WHERE invoice_number = 'AX-014-027');
+WHERE invoice_id = last_insert_id();
 
 DELETE FROM invoices
-WHERE invoice_number = 'AX-014-027';
-
+WHERE invoice_number = last_insert_id();
 
 -- Chuong 6
 -- bai 2:
@@ -181,8 +180,8 @@ select
 from vendors as v 
 join invoices as i
 on v.vendor_id = i.vendor_id
-group by v.vendor_name
-order by sum_payment_total desc
+group by v.vendor_id, v.vendor_name
+order by sum_payment_total desc;
 
 -- Bai 3:
 SELECT v.vendor_name, count(i.invoice_id) as 'count', sum(i.invoice_total) as 'sum'
@@ -210,9 +209,9 @@ SELECT
 from general_ledger_accounts as g 
 join invoice_line_items as ili on g.account_number = ili.account_number
 join invoices as i on ili.invoice_id = i.invoice_id
-WHERE i.invoice_date BETWEEN '2018-01-01' and '2018-06-30'
+WHERE i.invoice_date BETWEEN '2018-04-01' and '2018-06-30'
 group by g.account_description
-HAVING count(ili.account_number) > 1
+having count(ili.account_number) > 1
 order by sum(ili.line_item_amount) DESC;
 
 -- Bai 6:
@@ -270,11 +269,11 @@ WINDOW
 
 -- Bai 11:
 SELECT
-  DATE_FORMAT(invoice_date, '%Y-%m') AS invoice_month,
+  DATE_FORMAT(invoice_date, '%d/%m/%y') AS invoice_month,
   SUM(invoice_total) AS total_invoice_amount,
   AVG(SUM(invoice_total)) OVER (ORDER BY DATE_FORMAT(invoice_date, '%Y-%m') ROWS BETWEEN 3 PRECEDING AND CURRENT ROW) AS moving_avg_invoice
-FROM
-  invoices
+FROM 
+  invoices	
 GROUP BY
   DATE_FORMAT(invoice_date, '%Y-%m')
 ORDER BY

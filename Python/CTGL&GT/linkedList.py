@@ -1,34 +1,35 @@
 class ListNode:
-    def __init__(self, data):
-        self.data = data
+    def __init__(self, hoTen, msnv, tuoi, viTri, mucLuong):
+        self.hoTen = hoTen
+        self.
         self.next = None
     
     # Hàm duyệt danh sách
-    def traversal(self, head):
-        curNode = head
-        while curNode is not None:
-            print(curNode.data)
-            curNode = curNode.next
+    def traversal(self, head):              
+        curNode = head                      # curNode = 1 
+        while curNode is not None:          
+            print(curNode.data)             # print(2) 
+            curNode = curNode.next          # curNode = Node(2)
     
     # Hàm tìm kiếm
-    def unorderSearch(self, head, target):
+    def unorderSearch(self, head, value):
         curNode = head
-        while curNode is not None and curNode.data != target:
+        while curNode is not None and curNode.data != value:
             curNode = curNode.next
         return curNode is not None
     
     # Thêm một nút mới vào danh sách
-    def insertNode(self, head, item):
-        newNode = ListNode(item)  # Tạo 1 nút mới có trường dữ liệu là item
+    def insertNode(self, head, value):
+        newNode = ListNode(value)  # Tạo 1 nút mới có trường dữ liệu là item
         newNode.next = head
         head = newNode
         return newNode
 
     # Xóa một nút khỏi danh sách
-    def deleteNode(self, head, target):
+    def deleteNode(self, head, value):   
         preNode = None
         curNode = head
-        while curNode is not None and curNode.data != target:
+        while curNode is not None and curNode.data != 3:
             preNode = curNode
             curNode = curNode.next
         if curNode is not None:
@@ -38,30 +39,8 @@ class ListNode:
                 preNode.next = curNode.next
         return head
     
+# Test case
 a = ListNode(3)
-b = ListNode(4)
-c = ListNode(5)
-
-a.next = b
-b.next = c
-
-print(a.data)
-print(a.next.data)
-print(a.next.next.data)
-print()
-
-a.traversal(a)
-print()
-
-print(a.unorderSearch(a, 5))    # True
-print(a.unorderSearch(a, 6))    # False
-print(b.unorderSearch(b, 3))    # False
-print(b.unorderSearch(a, 3))    # True
-print()
-
-a = a.insertNode(a, 6)
-a.traversal(a)
-print()
-
-a = a.deleteNode(a, 5)
+a.insertNode(a, 3)
+a.insertNode(a, 5)
 a.traversal(a)

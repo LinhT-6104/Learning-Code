@@ -36,7 +36,7 @@ order by v.vendor_name, ili.invoice_id, ili.invoice_sequence;
 select SUM(largest_unpaid_invoices)
 from (SELECT vendor_id, max(invoice_total - payment_total - credit_total) as largest_unpaid_invoices
       from invoices 
-      WHERE payment_total < invoice_total or payment_total is NULL
+      WHERE payment_total + credit_total < invoice_total or payment_total is NULL
       group by vendor_id) as subQuery;
 
 -- Bai 6:

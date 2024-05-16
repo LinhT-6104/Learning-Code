@@ -1,8 +1,9 @@
 package Tuan6;
 
+import java.io.Serializable;
 import java.util.Scanner;
 
-public class SinhVien {
+public class SinhVien implements Serializable {
 	private String maSV;
 	private String hoTen;
 	private int tuoi;

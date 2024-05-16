@@ -1,57 +1,47 @@
-class Node:
-    def __init__ (self, data):
-        self.data = data
-        self.next = None
-
 class Stack:
-    def __init__(self):
+    def __init__(self, maxSize):
+        self.stackArray = [None]*maxSize
+        self.top = -1
         self.size = 0
-        self.top = None
-    
     def isEmpty(self):
         return self.size == 0
-
+    def isFull(self):
+        return self.size == len(self.stackArray)
     def length(self):
-        curNode = self.top
-        count = 0
-        while curNode is not None:
-            curNode = curNode.next
-            count += 1
-        return count
-
-    def push(self, x):
-        newNode = Node(x)
-        newNode.next = self.top
-        self.top = newNode
-        self.size += 1
-        return self.top
-
+        return self.size
+    def getTop(self):
+        return self.stackArray[self.top]
+    def push(self, value):
+        if self.isFull():
+            print("Mảng đầy, không thể thêm")
+        else:
+            self.top += 1
+            self.stackArray[self.top] = value
+            self.size += 1
     def pop(self):
         if self.isEmpty():
+            print("Mảng rỗng, không thể xóa")
             return None
-        popped = self.top.data
-        self.top = self.top.next
-        self.size -= 1
-        return popped
+        else:
+            removed = self.getTop()
+            self.stackArray[self.top] = None
+            self.top -= 1
+            self.size -= 1
+            return removed
 
-    def getTop(self):
-        return self.top.data
-
-def check(x):
-    stack = Stack()
-    parentheses_pairs = [('(', ')'), ('{', '}'), ('[', ']')]
-    
+def isDauNgoacHopLe(x):
+    check = Stack(len(x))
+    bracket = [['(',')'], ['[',']'], ['{','}']]
     for c in x:
-        for open, close in parentheses_pairs:
+        for open, close in bracket:
             if c == open:
-                stack.push(c)
+                check.push(c)
             elif c == close:
-                if stack.isEmpty() or stack.pop() != open:
+                if check.isEmpty() or check.pop() != open:
                     return False
-    return stack.isEmpty()
-    
+    return check.isEmpty()
 X = "[{}]"
-print(check(X))  # Output: True
+print(isDauNgoacHopLe(X))  # Output: True
 
 X = ['(', ')', '(', ')']
-print(check(X))  # Output: True
+print(isDauNgoacHopLe(X))  # Output: True

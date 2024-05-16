@@ -1,23 +1,42 @@
 package Test;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 public class test {
-	
-	public static int exp(int x, int n) {
-		if (n == 0) {
-			return 1;
-		}
+	public static void main(String[] args) throws Exception {
+		// Ghi vào File
+		File fileOut = new File("D:\\data.txt");
+		try {
+			FileOutputStream fileOutputStream= new FileOutputStream(fileOut);
+			String name = "Tran Duc Linh";
+			byte[] byteName = name.getBytes();
+			fileOutputStream.write(byteName);
+			System.out.println("Ghi du lieu vao file: " + fileOut.getAbsolutePath() + " thanh cong!");
+			fileOutputStream.close();
+		} catch (FileNotFoundException e) {
+			System.err.println("Có lỗi xảy ra:....");
+			e.printStackTrace();
+		} 
 		
-		int result = exp(x * x, (int)(n/2));
-		if (n % 2 == 0) {
-			return result;
+		// Doc tu file
+		File fileIn = new File("D:\\data.txt");
+		String data = "";
+		int key;
+		try {
+			FileInputStream fileInputStream = new FileInputStream(fileIn);
+			while ((key = fileInputStream.read()) != -1) {
+				data = data + (char)key + "";
+			}
+		} catch (Exception e) {
+			System.err.println("Có lỗi xảy ra...");
+			e.printStackTrace();
 		}
-		else {
-			return x * result;
-		}
-	}
-	
-	public static void main(String[] args) {
-		System.out.print("3 mũ 4 = " + exp(3,4));
+		System.out.println("Name = " + data);
+		
+		
 	}
 }

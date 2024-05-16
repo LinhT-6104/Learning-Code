@@ -11,8 +11,8 @@ import java.util.Scanner;
 
 public class Bai1 {
 	public static void main(String[] args) throws Exception {
-		String dirPath = "D:\\Learning-Code\\Java\\School_Exercise\\src\\Tuan7\\";
-		String fileName = "input.txt";
+		String dirPath = "D:\\Learning-Code\\Java\\School_Exercise\\";
+		String fileName = "hcn.txt";
 		String filePath = dirPath + fileName;
 		File file = new File(filePath);
 		
