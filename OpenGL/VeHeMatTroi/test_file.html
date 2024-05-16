@@ -5,9 +5,9 @@
     <meta charset="UTF-8">
     <title>COMP 274 - Đồ họa máy tính</title>
 
-    <script src="glsim.js"></script> <!-- load the OpenGL 1.1 simulation code -->
+    <script src="/glsim.js"></script> <!-- load the OpenGL 1.1 simulation code -->
     <script>
-        var frameNumber = 0, camera, loop = loop || 0;
+        var frameNumber = 0, camera;
         
         function drawSphere(radius, slices, stacks){
             var i,j;
@@ -18,8 +18,7 @@
                 var cosLat1 = Math.cos(latitude1);
                 var sinLat2 = Math.sin(latitude2);
                 var cosLat2 = Math.cos(latitude2);
-                // glBegin(GL_LINE_LOOP);
-                glBegin(GL_TRIANGLE_FAN);
+                glBegin(GL_LINE_LOOP);
                 for (i = 0; i <= slices; i++) {
                     var longitude = (2*Math.PI/slices) * i;
                     var sinLong = Math.sin(longitude);
@@ -40,56 +39,18 @@
         }
 
         function transform() {
-            camera.apply();
-            glClear(GL_COLOR_BUFFER_BIT || GL_DEPTH_BUFFER_BIT );
+            glClear(GL_COLOR_BUFFER_BIT || GL_DEPTH_BUFFER_BIT ); // Fills the scene with blue.
             frameNumber += 1;
-            draw();
-            loop && clearTimeout(loop);
-            loop = setTimeout(transform, 1000/60);
-        }
-        
-        function drawSun(){
-            glColor3fv([1, 0, 0]);
-            drawSphere(4, 64, 32);
-        }
-        
-        function drawEarth(){
-            glPushMatrix();
-
-            glRotatef(frameNumber, 0, 0, 1)
-            glTranslatef(10, 0, 0);
-            // glTranslatef(
-            //     8*Math.cos(((frameNumber%400-200)/200)*Math.PI),
-            //     12*Math.sin(((frameNumber%400-200)/200)*Math.PI),
-            //     0
-            // )
-            glColor3fv([0, 0, 1]);
-            drawSphere(2, 64, 32);
-            glPopMatrix();
-        }
-
-        function drawMoon() {
-            // Moon
-            glRotatef(frameNumber+4, 0, 0, 1)
-            glTranslatef(13, 0, 0)
-            glColor3fv([1,1,1]);
-            drawSphere(0.2, 64, 32);
-        }
-        
-        function drawMercury() {
-
         }
 
         function draw() {
-            drawSun();
-            drawEarth();
-            glPushMatrix();
-            // drawMoon();
-            glPopMatrix();
+            camera.apply();
+            glClear(GL_COLOR_BUFFER_BIT || GL_DEPTH_BUFFER_BIT );
+            drawSphere(10, 64, 32);
         }
 
         function initGL() {
-            glClearColor(0, 0, 0, 1);
+            glClearColor(0.9, 0.9, 0.9, 1);
             // The next three lines set up the coordinates system.
             glMatrixMode(GL_PROJECTION);
             glLoadIdentity();
@@ -112,8 +73,8 @@
             camera = new Camera();
             camera.lookAt(0, 0, 30, 0, 0, 0, 0, 1, 0);
             camera.setScale(15);
-            camera.installTrackball(transform);
-            transform();
+            camera.installTrackball(draw);
+            draw();
         }
 
         window.onload = init;

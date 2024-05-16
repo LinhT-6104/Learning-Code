@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>COMP 274 - Đồ họa máy tính</title>
+
+    <script src="glsim.js"></script> <!-- load the OpenGL 1.1 simulation code -->
+    <script>
+        frameNumber = 0;
+        
+        function drawEllipse(x,y,Rx,Ry,color = [0,0,0]){
+            var points = 60;
+            glColor3ubv(color);
+            glBegin(GL_POLYGON);
+                for (var i = 0; i < points; i++){
+                    theta = 2*Math.PI*i/points;
+                    cx = Rx*Math.cos(theta);
+                    cy = Ry*Math.sin(theta);
+                    glVertex2f(x+cx,y+cy);
+                }
+            glEnd();
+        }
+        
+        // cau b
+        function drawKoala(){
+            // ve cay 
+            glPushMatrix();
+                glColor3ubv([0,0,0]);
+                glScalef(0.9,0.9,0.9);
+                glBegin(GL_LINES);
+                    glVertex2f(-200,200);
+                    glVertex2f(-100,-50);
+                    glVertex2f(-50,200);
+                    glVertex2f(50,-50);
+                glEnd();
+            glPopMatrix();
+            
+            //than koala
+            glPushMatrix();
+            glTranslated(30,30,0);
+                glRotated(25,0,0,1);
+                drawEllipse(0,0,30,50,[80,31,80]);
+            glPopMatrix();
+            
+            //chan koala
+            glPushMatrix();
+            glTranslated(10,0,0);
+                glRotated(-100,0,0,1);
+                drawEllipse(0,0,10,30,[220,192,220]);
+            glPopMatrix();
+            
+            //tay
+            glPushMatrix();
+            glTranslated(-5,40,0);
+                glRotated(-70,0,0,1);
+                drawEllipse(0,0,10,30,[220,156,220]);
+            glPopMatrix();
+            
+            //tai phai
+            glPushMatrix();
+            glTranslated(50,100,0);
+                glRotated(0,0,0,1);
+                drawEllipse(0,0,15,15,[220,156,220]);
+            glPopMatrix();
+            
+            //tai trai
+            glPushMatrix();
+            glTranslated(0,120,0);
+                glRotated(0,0,0,1);
+                drawEllipse(0,0,15,15,[220,156,220]);
+            glPopMatrix();
+            
+            //dau
+            glPushMatrix();
+            glTranslated(10,90,0);
+                glRotated(75,0,0,1);
+                drawEllipse(0,0,25,35,[80,31,80]);
+            glPopMatrix();
+            
+            //mat phai
+            glPushMatrix();
+            glTranslated(23,93,0);
+                glRotated(0,0,0,1);
+                drawEllipse(0,0,5,5,[0,162,232]);
+            glPopMatrix();
+            
+            //mat trai 
+            glPushMatrix();
+            glTranslated(0,100,0);
+                glRotated(0,0,0,1);
+                drawEllipse(0,0,5,5,[0,162,232]);
+            glPopMatrix();
+            
+            //mui 
+            glPushMatrix();
+            glTranslated(5,80,0);
+                glRotated(-15,0,0,1);
+                drawEllipse(0,0,4,7,[80,31,80]);
+            glPopMatrix();
+            
+            
+        }
+
+        function draw() {
+            // setInterval(transform, 1000 / 24)
+            
+            drawKoala();
+        }
+
+        function initGL() {
+            glClearColor(0.9, 0.9, 0.9, 1);
+            // The next three lines set up the coordinates system.
+            glMatrixMode(GL_PROJECTION);
+            glLoadIdentity();
+            glOrtho(-300, 300, -250, 250, -1, 1);
+            glMatrixMode(GL_MODELVIEW);
+
+            glEnable(GL_POINT_SMOOTH);
+        }
+
+        function init() {  // Called by <body onload="init()">, when the page has loaded.
+            try {
+                glsimUse("glcanvas"); // OpenGL will draw to the canvas with id="glcanvas".
+            }
+            catch (e) {
+                document.getElementById("canvas-holder").innerHTML =
+                    "Sorry, an error occured:<br>" + e;
+                return;
+            }
+            initGL();
+            draw();
+        }
+
+        window.onload = init;
+
+    </script>
+
+</head>
+
+<body>
+
+    <h3>COMP 274 - Đồ họa máy tính</h3>
+
+    <noscript>
+        <p><b>Sorry, this page requires JavaScript!</b></p>
+    </noscript>
+
+    <div id="canvas-holder">
+        <canvas id="glcanvas" width="600" height="500" style="border: solid 1px gray;"></canvas>
+    </div>
+
+</body>
+
+</html>

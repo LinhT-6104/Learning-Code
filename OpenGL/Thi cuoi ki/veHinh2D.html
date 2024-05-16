@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>COMP 274 - Đồ họa máy tính</title>
+
+    <script src="/OpenGL/glsim.js"></script> <!-- load the OpenGL 1.1 simulation code -->
+    <script>
+        frameNumber = 0;
+        
+        // ------------------------------draw------------------------------
+            // Hinh vuong, Hinh chu nhat
+        function drawRectangle(x, y, w, h, color = [0,0,0]) {
+            glColor3ubv(color);
+            glBegin(GL_POLYGON);
+                glVertex2f(x + w/2, y + h/2);
+                glVertex2f(x - w/2, y + h/2);
+                glVertex2f(x - w/2, y - h/2);
+                glVertex2f(x + w/2, y - h/2);
+            glEnd();
+        }
+        
+            // Hinh thoi, hinh elip, hinh tron
+        function drawElip(x, y, r1, r2, stacks, color = [0,0,0]) {
+            glColor3ubv(color);
+            glBegin(GL_POLYGON);
+                for (let i = 0; i < stacks; i++) {
+                    angle = 2 * Math.PI * i / stacks
+                    cx = x + r1*Math.cos(angle);
+                    cy = y + r2*Math.sin(angle);
+                    glVertex2f(cx, cy);
+                }
+            glEnd();
+        }
+            // Hinh tam giac
+        function drawTriangle(x, y, w, h, color = [0, 0, 0,]) {
+            glColor3ubv(color);
+            glBegin(GL_POLYGON);
+                glVertex2f(x, y + h/2);
+                glVertex2f(x + w/2, y - h/2);
+                glVertex2f(x - w/2, y - h/2);
+            glEnd()
+        }
+            // Hinh binh hanh
+        function drawHBH(x, y, w, h, z, color = [0, 0, 0]) {
+            glColor3ubv(color);
+            glBegin(GL_POLYGON);
+                glVertex2f(x + w/2 + z, y + h/2);
+                glVertex2f(x + w/2 , y - h/2);
+                glVertex2f(x - w/2 - z, y - h/2);
+                glVertex2f(x - w/2 , y + h/2);
+            glEnd();
+        }
+            // Hinh thang
+        function drawHinhThang(x, y, w1, w2, h, color = [0,0,0]) {
+            glColor3ubv(color);
+            glBegin(GL_POLYGON);
+                glVertex2f(x + w1/2, y + h/2);
+                glVertex2f(x - w1/2, y + h/2);
+                glVertex2f(x - w2/2, y - h/2);
+                glVertex2f(x + w2/2, y - h/2);
+            glEnd()
+        }
+        
+            // Hinh vien vong tron
+        function drawCircleLine(x, y, r1, r2, color = [0,0,0]) {
+            glColor3ubv(color);
+            glBegin(GL_LINE_LOOP);
+                for (let i = 0; i < 64; i++) {
+                    angle = 2 * Math.PI * i / 64;
+                    cx = x + r1 * Math.cos(angle);
+                    cy = y + r2 * Math.sin(angle);
+                    glVertex2f(cx, cy);
+                }
+            glEnd();
+        }
+        
+        // ----------------------------------------------------------------
+        
+            // Ngoi sao
+        function drawStar(x, y, scales, color = [0,0,0]) {
+            glPushMatrix();
+            glTranslatef(x, y, 0);
+            glScalef(scales, scales, 1);
+            glRotated(180, 0, 0, 1);
+            for(let i = 0; i < 3; i++) {
+                drawTriangle(0, 0, 150, 50, color);
+                glRotated(360/5, 0, 0, 1);
+            }
+            glPopMatrix();
+        }
+        
+            // Co Viet Nam
+        function drawCoVN(x, y, w, h, scales) {
+            drawRectangle(x, y, w, h, [255, 0, 0]);
+            drawStar(x, y, scales, [255, 255, 0]);
+        }   
+        
+            // Cay thong
+        function drawCayThong(x, y, w, h1, h2, stacks) {
+            drawRectangle(x, y, w, h1, [120, 67, 21]);
+            y += h1/2
+            for (let i = 0; i < stacks; i++) {  q
+                y += h2/2;
+                drawTriangle(x, y, 2*w, h2, [55, 126, 71]);
+            }
+        }
+            // Coi xay gio 
+        function drawCoiXayGio(x, y, w, h, r1, r2) {    
+            drawRectangle(x, y, w, h, [128, 128, 128]);
+            glPushMatrix();
+            glTranslatef(x, y + h/2, 0);
+            glRotated(frameNumber/10, 0, 0, 1);
+            for (let i = 0 ; i < 3; i++) {
+                drawElip(0, r2, r1, r2, 4, [255, 255, 255]);
+                glRotated(360/3, 0, 0, 1);
+            }
+            glPopMatrix();
+        }
+            
+        // ----------------------------------------------------------------
+        
+        
+        function transform() {
+            glClear(GL_COLOR_BUFFER_BIT); // Fills the scene with blue.
+            // frameNumber += 1;
+        }
+        
+        function draw() {
+            transform();
+            drawRectangle(0, 200, 600, 300 , [255, 255, 0]);    // Hinh chu nhat
+            drawRectangle(-250, 200, 100, 100 , [240, 135, 132]);    // Hinh vuong
+            drawElip(-150, 200, 50, 50, 64, [255, 0, 0]);       // Hinh tron
+            drawElip(0, 200, 100, 50, 64, [117, 250, 141]);     // Hinh elip
+            drawElip(200, 200, 100, 50, 4, [22, 24, 250]);      // Hinh thoi
+            drawTriangle(-250, 100, 100, 100, [200, 200, 48]);  // Hinh tam giac
+            drawHBH(-150, 100, 50, 100, 25, [150, 150, 150]);   // Hinh binh hanh
+            drawHinhThang(0, 100, 100, 200, 100, [160, 255, 255]);  // Hinh thang
+            drawCircleLine(0, 0, 100, 50, [0,0,0]);          // Hinh vien hinh elip
+            
+            drawStar(200, 95, 0.7, [120, 120, 120]);    // Hinh ngoi sao
+            drawCoVN(-200, 0, 200, 100, 0.5);           // Hinh co Viet Nam
+            drawCayThong(-250, -230, 50, 50, 50, 5);    // Cay thong
+            drawCoiXayGio(200, -180, 7, 150, 7, 50);    // Coi xay gio
+            
+            requestAnimationFrame(draw);
+        }
+
+        function initGL() {
+            glClearColor(0.9, 0.9, 0.9, 1);
+            // The next three lines set up the coordinates system.
+            glMatrixMode(GL_PROJECTION);
+            glLoadIdentity();
+            glOrtho(-300, 300, -250, 250, -1, 1);
+            glMatrixMode(GL_MODELVIEW);
+
+            glEnable(GL_POINT_SMOOTH);
+        }
+
+        function init() {  // Called by <body onload="init()">, when the page has loaded.
+            try {
+                glsimUse("glcanvas"); // OpenGL will draw to the canvas with id="glcanvas".
+            }
+            catch (e) {
+                document.getElementById("canvas-holder").innerHTML =
+                    "Sorry, an error occured:<br>" + e;
+                return;
+            }
+            initGL();
+            draw();
+        }
+
+        window.onload = init;
+
+    </script>
+
+</head>
+
+<body>
+
+    <h3>COMP 274 - Đồ họa máy tính</h3>
+
+    <noscript>
+        <p><b>Sorry, this page requires JavaScript!</b></p>
+    </noscript>
+
+    <div id="canvas-holder">
+        <canvas id="glcanvas" width="600" height="500" style="border: solid 1px gray;"></canvas>
+    </div>
+
+</body>
+
+</html>

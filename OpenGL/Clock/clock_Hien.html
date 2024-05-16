@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>COMP 274 - Đồ họa máy tính</title>
+
+    <script src="/glsim.js"></script> <!-- load the OpenGL 1.1 simulation code -->
+    <script>
+        var frameNumber = 0, loop = loop || 0, fps = 1;
+
+        function drawCircle(x, y, r, color = [255, 255, 0], style = GL_POLYGON){
+            glBegin( style );
+            glColor3ubv(color);
+            for (i = 0; i < 64; i++){
+                angle = 2 * Math.PI * i / 64;
+                x1 = x + r * Math.cos(angle);
+                y1 = y + r * Math.sin(angle);
+                glVertex2f(x1, y1);
+            }
+            glEnd();
+        }
+        
+        function drawRectangle(x, y, w, h, color = [255, 0, 0]){
+            glBegin(GL_POLYGON);
+            glColor3ubv(color);
+            glVertex2f(x-w/2, y+h/2);
+            glVertex2f(x+w/2, y+h/2);
+            glVertex2f(x+w/2, y-h/2);
+            glVertex2f(x-w/2, y-h/2);
+            glEnd();
+        }
+
+        function transform() {
+            glClear(GL_COLOR_BUFFER_BIT); // Fills the scene with gray.
+            frameNumber += 1;
+            drawCircle(0, 0, 200, [0, 0, 0], GL_POLYGON);
+            drawCircle(0, 0, 190, [255, 255, 255], GL_POLYGON);
+            glPushMatrix(); // ve chi so
+            for(i = 0; i < 60; i++){
+                angle = 6;
+                if (i%5==0)
+                    drawRectangle(0, 180, 4, 10, [0, 0, 0])
+                else
+                    drawRectangle(0, 180, 2, 10, [0, 0, 0])
+                // drawRectangle(0, 180, i%5==0?4:2, 10, [0, 0, 0])
+                glRotatef(angle, 0, 0, 1);
+            }
+            glPopMatrix();
+            
+            // Vẽ kim gio
+            glPushMatrix();
+            glRotatef(-(frameNumber/3600)*30 , 0, 0, 1)
+            glBegin(GL_POLYGON);
+            glVertex2f(-4, 80);
+            glVertex2f(4, 80);
+            glVertex2f(5, 0);
+            glVertex2f(-5, 0);
+            glEnd();
+            glPopMatrix();
+            
+            // Vẽ kim phut
+            glPushMatrix();
+            glRotatef(-(frameNumber/60)*6, 0, 0, 1)
+            glBegin(GL_POLYGON);
+            glVertex2f(-3, 120);
+            glVertex2f(3, 120);
+            glVertex2f(3, 0);
+            glVertex2f(-3, 0);
+            glEnd();
+            glPopMatrix();
+            
+            // Vẽ kim giay
+            glPushMatrix();
+            glRotatef(-frameNumber*6, 0, 0, 1)
+            glBegin(GL_TRIANGLE_FAN);
+            glVertex2f(-1, 165);
+            glVertex2f(1, 165);
+            glVertex2f(2, -50);
+            glVertex2f(-2, -50);
+            glEnd();
+            glPopMatrix();
+        }
+
+        function draw() {
+            var d = new Date();
+            var h = d.getHours();
+            var m = d.getMinutes();
+            var s = d.getSeconds();
+            frameNumber = h * 3600 + m * 60 + s;
+            loop && clearInterval(loop);
+            loop = setInterval(transform, 1000/fps)
+        }
+
+        function initGL() {
+            glClearColor(0.9, 0.9, 0.9, 1);
+            // The next three lines set up the coordinates system.
+            glMatrixMode(GL_PROJECTION);
+            glLoadIdentity();
+            glOrtho(-300, 300, -250, 250, -1, 1);
+            glMatrixMode(GL_MODELVIEW);
+
+            glEnable(GL_POINT_SMOOTH);
+        }
+
+        function init() {  // Called by <body onload="init()">, when the page has loaded.
+            try {
+                glsimUse("glcanvas"); // OpenGL will draw to the canvas with id="glcanvas".
+            }
+            catch (e) {
+                document.getElementById("canvas-holder").innerHTML =
+                    "Sorry, an error occured:<br>" + e;
+                return;
+            }
+            initGL();
+            draw();
+        }
+
+        window.onload = init;
+
+    </script>
+
+</head>
+
+<body>
+
+    <h3>COMP 274 - Đồ họa máy tính</h3>
+
+    <noscript>
+        <p><b>Sorry, this page requires JavaScript!</b></p>
+    </noscript>
+
+    <div id="canvas-holder">
+        <canvas id="glcanvas" width="600" height="500" style="border: solid 1px gray;"></canvas>
+    </div>
+
+</body>
+
+</html>

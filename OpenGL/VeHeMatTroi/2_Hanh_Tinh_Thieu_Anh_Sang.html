@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>COMP 274 - Đồ họa máy tính</title>
+
+    <script src="\OpenGL\glsim.js"></script> <!-- load the OpenGL 1.1 simulation code -->
+    <script>
+        var frameNumber = 0, camera, loop = loop || 0;
+        var animate, light, sun, moon;
+        
+        function drawSphere(radius, slices, stacks){
+            var i,j;
+            for (j = 0; j < stacks; j++) {
+                var latitude1 = (Math.PI/stacks) * j - Math.PI/2;
+                var latitude2 = (Math.PI/stacks) * (j+1) - Math.PI/2;
+                var sinLat1 = Math.sin(latitude1);
+                var cosLat1 = Math.cos(latitude1);
+                var sinLat2 = Math.sin(latitude2);
+                var cosLat2 = Math.cos(latitude2);
+                // glBegin(GL_LINE_LOOP);
+                glBegin(GL_TRIANGLE_STRIP);
+                for (i = 0; i <= slices; i++) {
+                    var longitude = (2*Math.PI/slices) * i;
+                    var sinLong = Math.sin(longitude);
+                    var cosLong = Math.cos(longitude);
+                    var x1 = cosLong * cosLat1;
+                    var y1 = sinLong * cosLat1;
+                    var z1 = sinLat1;
+                    var x2 = cosLong * cosLat2;
+                    var y2 = sinLong * cosLat2;
+                    var z2 = sinLat2;
+                    glNormal3d(x2,y2,z2);
+                 glVertex3d(radius*x2,radius*y2,radius*z2);
+                 glNormal3d(x1,y1,z1);
+                    glVertex3d(radius*x1,radius*y1,radius*z1);
+                }
+                glEnd();
+            }
+        }
+        
+        function drawElip(R1, R2, color= [0, 1, 0]){
+            glBegin(GL_LINE_LOOP);
+            glColor3fv(color);
+            for (i = 0; i < 64; i++){
+                angle = 2 * Math.PI * i/64;
+                x = R1 * Math.cos(angle);
+                y = R2 * Math.sin(angle);
+                glVertex2f(x, y);
+            }
+            glEnd();
+        }
+
+        function transform() {
+            camera.apply();
+            glClear(GL_COLOR_BUFFER_BIT || GL_DEPTH_BUFFER_BIT );
+            if (animate.checked){
+                frameNumber += 1;
+                loop && clearTimeout(loop);
+                loop = setTimeout(transform, 1000/30);
+            }
+            draw();
+        }
+        
+        function drawSun(){
+            // glColor3f(1, 0, 0);
+            glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, [1, 0, 0, 1] );
+            drawSphere(4, 32, 16);
+        }
+        
+        function drawEarth(){
+            var R1 = 12, R2 = 8;
+            drawElip(R1, R2);
+            glPushMatrix();
+            angle = Math.PI * (frameNumber%400 - 200)/200;
+            glTranslatef(
+                R1 * Math.cos(angle),
+                R2 * Math.sin(angle),
+                0
+            );
+            // glColor3f(0, 0, 1);
+            glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, [0, 0, 1, 1] );
+            drawSphere(2, 32, 16);
+            drawMoon();
+            glPopMatrix();
+        }
+        
+        function drawMoon(){
+            var R1 = 5, R2 = 3, speed = 50;
+            drawElip(R1, R2, [0, 1, 1]);
+            angle = Math.PI * (frameNumber%(speed * 2) - speed)/speed;
+            glTranslatef(
+                R1 * Math.cos(angle),
+                R2 * Math.sin(angle),
+                0
+            );
+            glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, [.6, .6, .6, 1] );
+            drawSphere(1, 32, 16);
+        }
+
+        function draw() {
+            glColor3d(0.5,0.5,0.5);
+            var zero = [ 0, 0, 0, 1 ];
+            glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, zero);
+            if (light.checked) glEnable(GL_LIGHT0);
+            else glDisable(GL_LIGHT0);
+            drawSun();
+            drawEarth();
+        }
+
+        function initGL() {
+            glClearColor(0, 0, 0, 1);
+            // The next three lines set up the coordinates system.
+            glMatrixMode(GL_PROJECTION);
+            glLoadIdentity();
+            glOrtho(-300, 300, -250, 250, -300, 300);
+            glMatrixMode(GL_MODELVIEW);
+            glEnable(GL_DEPTH_TEST);
+            glEnable(GL_LIGHTING);
+            
+            // glEnable(GL_LIGHT0);
+            glEnable(GL_NORMALIZE);
+            glEnable(GL_COLOR_MATERIAL);
+            glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, 1);
+            glMateriali(GL_FRONT_AND_BACK, GL_SHININESS, 32);
+            
+            var dim = [ 0.5, 0.5, 0.5, 1 ];
+            glLightfv(GL_LIGHT0, GL_DIFFUSE, dim);
+            glLightfv(GL_LIGHT0, GL_SPECULAR, dim);
+        }
+
+        function init() {  // Called by <body onload="init()">, when the page has loaded.
+            try {
+                glsimUse("glcanvas"); // OpenGL will draw to the canvas with id="glcanvas".
+            }
+            catch (e) {
+                document.getElementById("canvas-holder").innerHTML =
+                    "Sorry, an error occured:<br>" + e;
+                return;
+            }
+            
+            animate = document.getElementById("enableAnimate");
+            light = document.getElementById("enableLight");
+            sun = document.getElementById("sunLight");
+            moon = document.getElementById("moonLight");
+            
+            animate.checked = false;
+            light.checked = true;
+            sun.checked = true;
+            moon.checked = true;
+
+            initGL();
+            camera = new Camera();
+            camera.lookAt(0, 0, 30, 0, 0, 0, 0, 1, 0);
+            camera.setScale(15);
+            camera.installTrackball(transform);
+            transform();
+        }
+
+        window.onload = init;
+
+    </script>
+
+</head>
+
+<body>
+
+    <h3>COMP 274 - Đồ họa máy tính</h3>
+
+    <noscript>
+        <p><b>Sorry, this page requires JavaScript!</b></p>
+    </noscript>
+    <div style="border: 1px solid red; padding: 1em; margin: 5px auto; display: flex; justify-content: space-around;">
+        <label for="enableAnimate">
+            <input onchange="transform()" type="checkbox" name="enableLight" id="enableAnimate" /> 
+           Animation
+        </label>
+        <label for="enableLight">
+            <input onchange="transform()" type="checkbox" name="enableLight" id="enableLight" /> 
+            Enable Light
+        </label>
+        <label for="sunLight">
+            <input type="checkbox" name="sunLight" id="sunLight" /> 
+            Sun Light
+        </label>
+        <label for="moonLight">
+            <input type="checkbox" name="sunLight" id="moonLight" /> 
+            Moon Light
+        </label>
+    </div>
+    <div id="canvas-holder">
+        <canvas id="glcanvas" width="600" height="500" style="border: solid 1px gray;"></canvas>
+    </div>
+
+</body>
+
+</html>

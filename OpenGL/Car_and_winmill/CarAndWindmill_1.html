@@ -5,7 +5,7 @@
         <meta charset="UTF-8">
         <title>COMP 274 - Đồ họa máy tính</title>
 
-        <script src="glsim.js"></script> <!-- load the OpenGL 1.1 simulation code -->
+        <script src="/glsim.js"></script> <!-- load the OpenGL 1.1 simulation code -->
         <script>
             angle = 0;
             frameNumber = 0;
@@ -108,6 +108,7 @@
                 glPopMatrix();
             }
             
+            // Ve coi xay gio
             function drawWindmill(x, y, w, h) {
                 // Ve cot:
                 quad(x, y, w, h, [170, 153, 153]);
@@ -128,6 +129,7 @@
                 glPopMatrix();
             }
             
+            // Ve xe
             function drawCar(x, y, w, h , color = [255, 0, 0]) {
                 glPushMatrix();
                     glTranslatef(index_X, y, 0);

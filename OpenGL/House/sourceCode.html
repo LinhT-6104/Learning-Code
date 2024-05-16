@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <title>COMP 274 - Đồ họa máy tính</title>
 
-    <script src="glsim.js"></script> <!-- load the OpenGL 1.1 simulation code -->
+    <script src="/OpenGL/glsim.js"></script> <!-- load the OpenGL 1.1 simulation code -->
     <script>
         var loop = loop || 0;
         var frameNumber = 0;
@@ -13,7 +13,7 @@
 
         function transform() {
             // glClear(GL_COLOR_BUFFER_BIT); // Fills the scene with blue.
-            frameNumber += 2;
+            // frameNumber += 2;
             glClear(GL_COLOR_BUFFER_BIT);
             // Ve ngoi nha
             drawRectangle(300, 316, 440 - 160, 480 - 280, [255, 255, 0]);   // Than nha mau vang
@@ -57,6 +57,7 @@
         function drawLinesAround(x, y, r, numSpokes, color = [255, 0, 0]) {
             glColor3ubv(color);
             glBegin(GL_LINES);
+            glLineWidth(100.0);
             for (let i = 0; i < numSpokes; i++) {
                 let theta = 2 * Math.PI * i / numSpokes;
                 let lx = x + (26 + 13) * Math.cos(theta);

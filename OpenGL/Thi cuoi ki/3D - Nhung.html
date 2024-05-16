@@ -1,0 +1,268 @@
+
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>COMP 274 - Đồ họa máy tính</title>
+
+    <script src="js/glsim.js"></script> <!-- load the OpenGL 1.1 simulation code -->
+    <script>
+        frameNumber = 0;
+        var camera, animate, viewLight; 
+        var loadingImages = true;
+        var textureImages = new Array();  // Will hold Image objects loaded from image URLs.
+        var textureImageURLs = [
+            "img/Earth-1024x512.jpg",   // Trái đất
+            "img/marble.jpg",           // Mặt trăng
+            "img/mandelbrot.jpeg"       // Mặt trời
+        ];
+        
+        function drawModel(model) {
+            glEnableClientState(GL_VERTEX_ARRAY);
+            glVertexPointer(3,GL_FLOAT,0,model.vertexPositions);
+            glEnableClientState(GL_NORMAL_ARRAY);
+            glNormalPointer(GL_FLOAT, 0, model.vertexNormals);
+            glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+            glTexCoordPointer(2,GL_FLOAT,0,model.vertexTextureCoords);
+            glDrawElements(GL_TRIANGLES, model.indices.length, GL_UNSIGNED_BYTE, model.indices);
+            glDisableClientState(GL_VERTEX_ARRAY);
+            glDisableClientState(GL_NORMAL_ARRAY);
+            glDisableClientState(GL_TEXTURE_COORD_ARRAY);    
+        }
+        
+        function loadImages() {
+            var loadedCt = 0;
+            for (var i = 0; i < textureImageURLs.length; i++) {
+                textureImages[i] = new Image();
+                textureImages[i].onload = imageLoaded;
+                textureImages[i].src = textureImageURLs[i];
+            }
+            function imageLoaded() {
+                loadedCt++;
+                if (loadedCt == textureImageURLs.length) {
+                    loadingImages = false;
+                    glEnable(GL_TEXTURE_2D);
+                    var texnum = Number(document.getElementById("texture").value);
+                    var image = textureImages[texnum];
+                    try {
+                        glTexImage2D(GL_TEXTURE_2D,0,GL_RGBA,image.width,image.height,0,GL_RGBA,GL_UNSIGNED_BYTE,image);
+                    } catch(e) {
+                        // Some browsers (Chrome at least) get a Security error if they try to use an image from the local disk.
+        				document.getElementById("headline").innerHTML="Can't access texture.<br>Note: Some browsers can't use a file from a local disk."
+                        return;
+                    }
+                    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);  // MUST set this since we don't have mipmaps
+                    //draw();
+                    // document.getElementById("object").disabled = false;
+                    document.getElementById("texture").disabled = false;
+                }
+            }
+        }
+        
+        function drawSphere(radius, slices, stacks) {
+           radius = radius || 0.5;
+           slices = slices || 32;
+           stacks = stacks || 16;
+           var vertexCount = (slices+1)*(stacks+1);
+           var vertices = new Float32Array( 3*vertexCount );
+           var normals = new Float32Array( 3* vertexCount );
+           var texCoords = new Float32Array( 2*vertexCount );
+           var indices = new Uint16Array( 2*slices*stacks*3 );
+           var du = 2*Math.PI/slices;
+           var dv = Math.PI/stacks;
+           var i,j,u,v,x,y,z;
+           var indexV = 0;
+           var indexT = 0;
+           for (i = 0; i <= stacks; i++) {
+              v = -Math.PI/2 + i*dv;
+              for (j = 0; j <= slices; j++) {
+                 u = j*du;
+                 x = Math.cos(u)*Math.cos(v);
+                 y = Math.sin(u)*Math.cos(v);
+                 z = Math.sin(v);
+                 vertices[indexV] = radius*x;
+                 normals[indexV++] = x;
+                 vertices[indexV] = radius*y;
+                 normals[indexV++] = y;
+                 vertices[indexV] = radius*z;
+                 normals[indexV++] = z;
+                 texCoords[indexT++] = j/slices;
+                 texCoords[indexT++] = i/stacks;
+              } 
+           }
+           var k = 0;
+           for (j = 0; j < stacks; j++) {
+              var row1 = j*(slices+1);
+              var row2 = (j+1)*(slices+1);
+              for (i = 0; i < slices; i++) {
+                  indices[k++] = row1 + i;
+                  indices[k++] = row2 + i + 1;
+                  indices[k++] = row2 + i;
+                  indices[k++] = row1 + i;
+                  indices[k++] = row1 + i + 1;
+                  indices[k++] = row2 + i + 1;
+              }
+           }
+           return {
+               vertexPositions: vertices,
+               vertexNormals: normals,
+               vertexTextureCoords: texCoords,
+               indices: indices
+           };
+        }
+
+        function transform() {
+            if (animate.checked) {
+            	frameNumber++;
+            	draw();
+            	setTimeout(transform, 1000/120);
+            }
+        }
+        
+        function drawSun(){
+            let image = textureImages[2];
+            glEnable(GL_TEXTURE_2D);
+            glTexImage2D(GL_TEXTURE_2D,0,GL_RGBA,image.width,image.height,0,GL_RGBA,GL_UNSIGNED_BYTE,image);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);  // MUST set this since we don't have mipmaps
+            
+            // glMatrixMode(GL_TEXTURE);
+            
+            // glLoadIdentity();
+            // glColor3f(1, 0, 0);
+            let sun = drawSphere(5, 64, 32);
+            drawModel(sun);
+            
+        }
+        function drawEarth(){
+            let image = textureImages[0];
+            glEnable(GL_TEXTURE_2D);
+            glTexImage2D(GL_TEXTURE_2D,0,GL_RGBA,image.width,image.height,0,GL_RGBA,GL_UNSIGNED_BYTE,image);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);  // MUST set this since we don't have mipmaps
+            
+            // glMatrixMode(GL_TEXTURE);
+            //glLoadIdentity();
+            // glColor3f(1, 0, 0);
+            glPushMatrix();
+            
+            glRotatef(frameNumber,0,0,1);
+            glTranslatef(10,0,0);
+            let earth = drawSphere(2, 64, 32);
+            drawModel(earth);
+            glPopMatrix();
+        }
+        function drawMoon() {
+            let image = textureImages[1];
+            glEnable(GL_TEXTURE_2D);
+            glTexImage2D(GL_TEXTURE_2D,0,GL_RGBA,image.width,image.height,0,GL_RGBA,GL_UNSIGNED_BYTE,image);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);  // MUST set this since we don't have mipmaps
+            
+            glPushMatrix();
+            
+            glRotatef(frameNumber, 0, 0, 1);
+            glTranslatef(15, 0, 0);
+            let moon = drawSphere(0.5, 64, 32);
+            drawModel(moon);
+            glPopMatrix();
+        }
+        function draw() {
+            glClearColor(0,0,0,1);
+            glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT ); 
+           
+            if (viewLight.checked)
+                glEnable(GL_LIGHT0);
+            else
+                glDisable(GL_LIGHT0);
+            console.log("OK")
+            camera.apply();
+            
+            drawSun();
+           
+            drawEarth();
+           
+            drawMoon();
+        }
+
+        function initGL() {
+            glClearColor(0, 0, 0, 1);  
+            glEnable(GL_DEPTH_TEST); 
+            glEnable(GL_LIGHTING);
+            glEnable(GL_NORMALIZE);
+            glEnable(GL_COLOR_MATERIAL);
+            glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, 1);
+            glMateriali(GL_FRONT_AND_BACK, GL_SHININESS, 32);
+        }
+
+        function init() {  // Called by <body onload="init()">, when the page has loaded.
+            try {
+                glsimUse("glcanvas"); // OpenGL will draw to the canvas with id="glcanvas".
+            }
+            catch (e) {
+                document.getElementById("canvas-holder").innerHTML =
+                    "Sorry, an error occured:<br>" + e;
+                return;
+            }
+            animate = document.getElementById("animate");
+            animate.onchange = transform;
+            
+            viewLight = document.getElementById('viewLight');
+            viewLight.onchange = draw;
+            
+            initGL();
+            camera = new Camera();
+            camera.lookAt(0,0,30, 0,0,0, 0,1,0);
+            camera.setScale(15);
+            camera.installTrackball(draw);
+            
+            loadImages();
+            draw();
+             if (loadingImages) {
+                console.log("Loading...")
+                return;
+            }
+            
+        }
+
+        window.onload = init;
+
+    </script>
+
+</head>
+
+<body>
+    <h3>COMP 274 - Đồ họa máy tính</h3>
+    <b>Texture:</b>
+    <select id="texture">
+        <option value="1">Earth</option>
+        <option value="3">Moon</option>
+        <option value="5">Sun</option>
+    </select>
+    <div style="display: flex; justify-content: space-between;">
+        <label for="animate">
+            <input type="checkbox" name="animate" id="animate">
+            Animate
+        </label>
+        <label for="viewLight">
+            <input type="checkbox" name="viewLight" id="viewLight">
+            View Light
+        </label>
+        <label for="sunLight">
+            <input type="checkbox" name="sunLight" id="sunLight">
+            Sun Light
+        </label>
+        <label for="moonLight">
+            <input type="checkbox" name="moonLight" id="moonLight">
+            Moon Light
+        </label>
+    </div>
+    <noscript>
+        <p><b>Sorry, this page requires JavaScript!</b></p>
+    </noscript>
+    
+    <div id="canvas-holder">
+        <canvas id="glcanvas" width="600" height="500" style="border: solid 1px gray;"></canvas>
+    </div>
+
+</body>
+
+</html>

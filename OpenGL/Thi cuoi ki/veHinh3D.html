@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>COMP 274 - Đồ họa máy tính</title>
+
+    <script src="/OpenGL/glsim.js"></script> <!-- load the OpenGL 1.1 simulation code -->
+    <script src="/OpenGL/basic-object-model.js"></script>
+    <script>
+        var frameNumber = 0, camera;
+
+        function drawCylinder(r = 0.2, R = 0.4, n = 100) {
+            glBegin(GL_TRIANGLE_STRIP);
+            for (i = 0.0; i <= n; i++) {
+                theta = 2.0 * 3.1415926 * i / n;
+                x = R * Math.cos(theta);
+                y = R * Math.sin(theta);
+                glVertex3f(x, y, 0);
+                theta = 2.0 * 3.1415926 * (i + 1) / n;
+                x = r * Math.cos(theta);
+                y = r * Math.sin(theta);
+                glVertex3f(x, y, 0);
+            }
+            glEnd();
+        }
+
+        function drawElip(R1, R2, color = [0, 0, 0]) {
+            glBegin(GL_LINE_LOOP);
+            for (i = 0; i < 64; i++) {
+                angle = 2 * Math.PI * i / 64;
+                x = R1 * Math.cos(angle);
+                y = R2 * Math.sin(angle);
+                glVertex3f(x, 0.68, y);
+            }
+            glEnd();
+        }
+        
+        function drawModel(model) {
+            glEnableClientState(GL_VERTEX_ARRAY);
+            glVertexPointer(3, GL_FLOAT, 0, model.vertexPositions);
+            glEnableClientState(GL_NORMAL_ARRAY);
+            glNormalPointer(GL_FLOAT, 0, model.vertexNormals);
+            glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+            glTexCoordPointer(2, GL_FLOAT, 0, model.vertexTextureCoords);
+            glDrawElements(GL_TRIANGLES, model.indices.length, GL_UNSIGNED_BYTE, model.indices);
+            glDisableClientState(GL_VERTEX_ARRAY);
+            glDisableClientState(GL_NORMAL_ARRAY);
+            glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+        }
+        
+        function transform() {
+            draw();
+            if (animating == true) {
+                frameNumber += 1;
+                requestAnimationFrame(transform);
+            }
+        }
+
+        function draw() {
+            camera.apply();
+            
+            // sun
+            if (sun.checked) {
+                glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, [1, 1, 0, 1]);
+                glEnable(GL_LIGHT0);
+            } else {
+                glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, [0, 0, 0, 1]);
+                glDisable(GL_LIGHT0);
+            }
+            glPushMatrix();
+                glTranslated(0, 0, 0);
+                glRotatef(frameNumber, 0, 1, 0);
+                glLightfv(GL_LIGHT0, GL_POSITION, [0, 0, 0, 1]);
+                drawModel(uvSphere(5, 16, 8));
+            glPopMatrix();
+            glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, [0, 0, 0, 1]);
+                
+
+            // Mercury
+            if (mercury.checked) {
+                glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, [0.9, 0.5, 0.3, 1]);
+            } else {
+                glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, [0, 0, 0, 1]);
+            }
+            glPushMatrix();
+                glPushMatrix();
+                    glTranslated(0, -0.68, 0);
+                    drawElip(7, 6);
+                glPopMatrix();
+                angle = Math.PI * (frameNumber * 0.71) / 200;
+                glTranslated(
+                    7 * Math.cos(angle),
+                    0,
+                    6 * Math.sin(angle));
+                drawModel(uvSphere(0.5, 16, 8));
+            glPopMatrix();
+            glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, [0, 0, 0, 1]);
+            
+
+            // Venus
+            if (venus.checked) {
+                glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, [0.9, 0.5, 0.3, 1]);
+            } else {
+                glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, [0, 0, 0, 1]);
+            }
+            glPushMatrix();
+                glPushMatrix();
+                    glTranslated(0, -0.68, 0);
+                    drawElip(9, 7.5);
+                glPopMatrix();
+                angle = Math.PI * (frameNumber * 1) / 200;
+                glTranslated(
+                    9 * Math.cos(angle),
+                    0,
+                    7.5 * Math.sin(angle));
+                drawModel(uvSphere(0.8, 16, 8));
+            glPopMatrix();
+            glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, [0, 0, 0, 1]);
+            
+
+            // Earth
+            if (earth.checked) {
+                glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, [0.2, 0.5, 0.5, 1]);
+            } else {
+                glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, [0, 0, 0, 1]);
+            }
+            glPushMatrix();
+                glPushMatrix();
+                glTranslated(0, -0.68, 0);
+                drawElip(11, 9.5);
+                glPopMatrix();
+
+                angle = Math.PI * (frameNumber * 0.64) / 200;
+                glTranslated(
+                    11 * Math.cos(angle),
+                    0,
+                    9.5 * Math.sin(angle));
+                drawModel(uvSphere(0.7, 16, 8));
+
+                if (moon.checked) {
+                    glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, [0.5, 0.5, 0.5, 1]);
+                } else {
+                    glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, [0, 0, 0, 1]);
+                }
+                // Mặt trăng    
+                glPushMatrix();
+                    glRotated((frameNumber) * 0.2, 1, 0, 0);
+                    glPushMatrix();
+                        glRotatef(0.9, 0, 0, 1);
+                        glTranslated(1.5, 0.68, 0);
+                        drawModel(uvSphere(0.3, 16, 8));
+                    glPopMatrix();
+                glPopMatrix();
+            glPopMatrix();
+            glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, [0, 0, 0, 1]);
+            
+
+            // Mars
+            if (mars.checked) {
+                glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, [0.6, 0.1, 0.1, 1]);
+            } else {
+                glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, [0, 0, 0, 1]);
+            }
+            glPushMatrix();
+                glPushMatrix();
+                    glTranslated(0, -0.68, 0);
+                    drawElip(13, 12);
+                glPopMatrix();
+                angle = Math.PI * (frameNumber * 0.78) / 200;
+                glTranslated(
+                    13 * Math.cos(angle),
+                    0,
+                    12 * Math.sin(angle));
+                drawModel(uvSphere(0.65, 16, 8));
+            glPopMatrix();
+            glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, [0, 0, 0, 1]);
+            
+
+            // jupiter
+            if (jupiter.checked) {
+                glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, [0.5, 0.1, 0, 1]);
+
+            } else {
+                glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, [0, 0, 0, 1]);
+            }
+            glPushMatrix();
+                glPushMatrix();
+                    glTranslated(0, -0.68, 0);
+                    drawElip(15, 14);
+                glPopMatrix();
+                angle = Math.PI * (frameNumber * 0.78) / 200;
+                glTranslated(
+                    15 * Math.cos(angle),
+                    0,
+                    14 * Math.sin(angle));
+                drawModel(uvSphere(1.3, 16, 8));
+            glPopMatrix();
+            glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, [0, 0, 0, 1]);
+            
+
+            // saturn
+            if (saturn.checked) {
+                glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, [0.9, 0.3, 0, 1]);
+            } else {
+                glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, [0, 0, 0, 1]);
+            }
+            glPushMatrix();
+                glPushMatrix();
+                    glTranslated(0, -0.68, 0);
+                    drawElip(19, 18);
+                glPopMatrix();
+                angle = Math.PI * (frameNumber * 0.81) / 200;
+                glTranslated(
+                    19 * Math.cos(angle),
+                    0,
+                    18 * Math.sin(angle));
+                drawModel(uvSphere(1.2, 16, 8));
+                glPushMatrix();
+                    glRotatef(90, 1, 0, 0);
+                    drawCylinder(1.5, 1.8);
+                glPopMatrix();
+            glPopMatrix();
+            glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, [0, 0, 0, 1]);
+            
+
+            // uranus
+            if (uranus.checked) {
+                glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, [0.1, 0.4, 0.3, 1]);
+            } else {
+                glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, [0, 0, 0, 1]);
+            }
+            glPushMatrix();
+                glPushMatrix();
+                    glTranslated(0, -0.68, 0);
+                    drawElip(23, 22);
+                glPopMatrix();
+                angle = Math.PI * (frameNumber * 0.71) / 200;
+                glTranslated(
+                    23 * Math.cos(angle),
+                    0,
+                    22 * Math.sin(angle));
+                drawModel(uvSphere(1.1, 16, 8));
+            glPopMatrix();
+            glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, [0, 0, 0, 1]);
+            
+
+            // Neptune
+            if (neptune.checked) {
+                glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, [0.2, 0.5, 0.8, 1]);
+            } else {
+                glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, [0, 0, 0, 1]);
+            }
+            glPushMatrix();
+                glPushMatrix();
+                    glTranslated(0, -0.68, 0);
+                    drawElip(28, 27);
+                glPopMatrix();
+                angle = Math.PI * (frameNumber * 0.06) / 200;
+                glTranslated(
+                    28 * Math.cos(angle),
+                    0,
+                    27 * Math.sin(angle));
+                drawModel(uvSphere(1.2, 16, 8));
+            glPopMatrix();
+            glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, [0, 0, 0, 1]);
+        }
+
+        function initGL() {
+            glEnable(GL_DEPTH_TEST);
+            glEnable(GL_LIGHTING);
+            glEnable(GL_LIGHT0);
+            glEnable(GL_NORMALIZE);
+            glEnable(GL_COLOR_MATERIAL);
+            glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, 1);
+            glMateriali(GL_FRONT_AND_BACK, GL_SHININESS, 32);
+            
+            glLightfv(GL_LIGHT0, GL_AMBIENT, [1, 1, 1, 1]);
+            glLightfv(GL_LIGHT0, GL_DIFFUSE, [0.7, 0.7, 0.7, 1]);
+            glLightfv(GL_LIGHT0, GL_SPECULAR, [0.7, 0.7, 0.7, 1]);
+        }
+    
+        var animating = false;
+        function init() {  // Called by <body onload="init()">, when the page has loaded.
+            try {
+                glsimUse("glcanvas"); // OpenGL will draw to the canvas with id="glcanvas".
+            }
+            catch (e) {
+                document.getElementById("canvas-holder").innerHTML =
+                    "Sorry, an error occured:<br>" + e;
+                return;
+            }
+            
+            animation = document.getElementById("animation");
+            globalLight = document.getElementById("globalLight");
+            sun = document.getElementById("sun");
+            mercury = document.getElementById("mercury");
+            venus = document.getElementById("venus");
+            earth = document.getElementById("earth");
+            moon = document.getElementById("moon");
+            mars = document.getElementById("mars");
+            jupiter = document.getElementById("jupiter");
+            saturn = document.getElementById("saturn");
+            uranus = document.getElementById("uranus");
+            neptune = document.getElementById("neptune");
+            
+            sun.onchange = draw;
+            mercury.onchange = draw;
+            venus.onchange = draw;
+            earth.onchange = draw;
+            moon.onchange = draw;
+            mars.onchange = draw;
+            jupiter.onchange = draw;
+            saturn.onchange = draw;
+            uranus.onchange = draw;
+            neptune.onchange = draw;
+            
+            animation.onchange = function () {
+                if (animation.checked) {
+                    animating = true;
+                    transform();
+                } else {
+                    animating = false;
+                    frameNumber = 0;
+                }
+            }
+            
+            animation.checked = false;
+            sun.checked = false;
+            mercury.checked = false;
+            venus.checked = false;
+            earth.checked = false;
+            moon.checked = false;
+            mars.checked = false;
+            jupiter.checked = false;
+            saturn.checked = false;
+            uranus.checked = false;
+            neptune.checked = false;
+            
+            initGL();
+            
+            camera = new Camera();
+            camera.lookAt(100, 500, 500, 0, 0, 0, 0, 0, 1);
+            camera.setScale(25);
+            camera.installTrackball(draw);
+            
+            draw();
+        }
+
+        window.onload = init;
+
+    </script>
+
+</head>
+
+<body>
+
+    <h3>COMP 274 - Đồ họa máy tính</h3>
+
+    <noscript>
+        <p><b>Sorry, this page requires JavaScript!</b></p>
+    </noscript>
+    
+    <div>
+        <label for="animation"><input type="checkbox" name="animation" id="animation" /> Animation </label>
+        <label for="globalLight"><input type="checkbox" name="globalLight" id="globalLight" /> Global Light </label>
+    </div>
+    
+    <div>
+        <label for="sun"><input type="checkbox" name="sun" id="sun" /> Sun </label>
+        <label for="mercury"><input type="checkbox" name="mercury" id="mercury" /> Mercury </label>
+        <label for="venus"><input type="checkbox" name="venus" id="venus" /> Venus </label>
+        <label for="earth"><input type="checkbox" name="earth" id="earth" /> Earth </label>
+        <label for="moon"><input type="checkbox" name="moon" id="moon" /> Moon </label>
+        <label for="mars"><input type="checkbox" name="mars" id="mars" /> Mars </label>
+        <label for="jupiter"><input type="checkbox" name="jupiter" id="jupiter" /> Jupiter </label>
+        <label for="saturn"><input type="checkbox" name="saturn" id="saturn" /> Saturn </label>
+        <label for="uranus"><input type="checkbox" name="uranus" id="uranus" /> Uranus </label>
+        <label for="neptune"><input type="checkbox" name="neptune" id="neptune" /> Neptune </label>
+    </div>
+
+    <div id="canvas-holder">
+        <canvas id="glcanvas" width="600" height="500" style="border: solid 1px gray;"></canvas>
+    </div>
+
+</body>
+
+</html>
