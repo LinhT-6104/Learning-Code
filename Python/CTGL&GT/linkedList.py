@@ -1,7 +1,6 @@
 class ListNode:
     def __init__(self, hoTen, msnv, tuoi, viTri, mucLuong):
         self.hoTen = hoTen
-        self.
         self.next = None
     
     # Hàm duyệt danh sách
